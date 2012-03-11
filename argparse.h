@@ -4,11 +4,19 @@
  * Command-line arguments parsing library.
  *
  * This module is inspired by parse-options.c (git) and python's argparse
- * module, it:
+ * module.
+ *
+ * The program defines what arguments it requires, and `argparse` will figure out
+ * how to parse those out of `argc` and `argv`, it also automatically generates
+ * help and usage messages and issues errors when users give the program invalid
+ * arguments:
+ *
+ * Features:
  *  - handles both optional and positional arguments
  *  - produces highly informative usage messages
+ *  - issures errors when given invalid arguments
  *
- *  @author Yecheng Fu <cofyc.jackson@gmail.com>
+ * @author Yecheng Fu <cofyc.jackson@gmail.com>
  */
 
 #include <assert.h>

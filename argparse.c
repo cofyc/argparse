@@ -9,7 +9,7 @@ struct argparse_ctx {
     int argc;
     const char **argv;
     const char **out;
-    int outidx;
+    int cpidx;
     const char *arg;            // current argument
     const char *optvalue;       // current option value
 };
@@ -50,8 +50,8 @@ argparse_getvalue(struct argparse_ctx *ctx, const struct argparse_option *opt)
         }
         return 0;
     case OPTION_INTEGER:
-        if (ctx->optvalue) {
-            *(int *)opt->value = strtol(ctx->optvalue, (char **)&s, 0);
+        if (strlen(ctx->arg) > 2) {
+            *(int *)opt->value = strtol(ctx->arg + 2, (char **)&s, 0);
         } else if (ctx->argc > 1) {
             ctx->argc--;
             *(int *)opt->value = strtol(*++ctx->argv, (char **)&s, 0);
@@ -131,8 +131,9 @@ argparse(int argc, const char **argv, const struct argparse_option *options, con
 
     for (; ctx.argc; ctx.argc--, ctx.argv++) {
         const char *arg = ctx.argv[0];
-        if (*arg != '-' || !arg[1]) {
-            ctx.out[ctx.outidx++] = ctx.argv[0];
+        if (arg[0] != '-' || !arg[1]) {
+            // if it's not option or is a single char '-', copy verbatimly
+            ctx.out[ctx.cpidx++] = ctx.argv[0];
             continue;
         }
         // short option
@@ -164,10 +165,10 @@ unknown:
         continue;
     }
 
-    memmove(ctx.out + ctx.outidx, ctx.argv, ctx.argc * sizeof(*ctx.out));
-    ctx.out[ctx.outidx + ctx.argc] = NULL;
+    memmove(ctx.out + ctx.cpidx, ctx.argv, ctx.argc * sizeof(*ctx.out));
+    ctx.out[ctx.cpidx + ctx.argc] = NULL;
 
-    return ctx.outidx + ctx.argc;
+    return ctx.cpidx + ctx.argc;
 }
 
 void

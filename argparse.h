@@ -24,10 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct argparser;
+struct argparse;
 struct argparse_option;
 
-typedef int argparse_callback(struct argparser *this, struct argparse_option *option);
+typedef int argparse_callback(struct argparse *this, struct argparse_option *option);
 
 enum argparse_option_type {
     /* special */
@@ -69,7 +69,7 @@ struct argparse_option {
 /*
  * argpparser
  */
-struct argparser {
+struct argparse {
     // user supplied
     const struct argparse_option *options;
     const char *const *usage;
@@ -84,7 +84,7 @@ struct argparser {
 
 
 // builtin callbacks
-extern int argparse_help_cb(struct argparser *this, struct argparse_option *option);
+extern int argparse_help_cb(struct argparse *this, struct argparse_option *option);
 
 // helper macros
 #define OPT_END()                       { OPTION_END }
@@ -93,7 +93,7 @@ extern int argparse_help_cb(struct argparser *this, struct argparse_option *opti
 #define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
-extern int argparse_init(struct argparser *this, struct argparse_option *options, const char *const *usage);
-extern int argparse_parser(struct argparser *this, int argc, const char **argv);
-extern void argparse_usage(struct argparser *this);
+extern int argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage);
+extern int argparse_parser(struct argparse *this, int argc, const char **argv);
+extern void argparse_usage(struct argparse *this);
 #endif

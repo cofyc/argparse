@@ -10,7 +10,7 @@ skip_prefix(const char *str, const char *prefix)
 }
 
 static int
-argparse_error(struct argparser *this, const struct argparse_option *opt, const char *reason)
+argparse_error(struct argparse *this, const struct argparse_option *opt, const char *reason)
 {
     if (!strncmp(this->arg, "--", 2)) {
         return fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
@@ -20,7 +20,7 @@ argparse_error(struct argparser *this, const struct argparse_option *opt, const 
 }
 
 static int
-argparse_getvalue(struct argparser *this, const struct argparse_option *opt)
+argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
 {
     const char *s;
     if (!opt->value) goto no_value;
@@ -79,7 +79,7 @@ argparse_options_check(const struct argparse_option *options)
 }
 
 static int
-argparse_short_opt(struct argparser *this, const struct argparse_option *options)
+argparse_short_opt(struct argparse *this, const struct argparse_option *options)
 {
     for (; options->type != OPTION_END; options++) {
         if (options->short_name == *(this->argv[0] + 1)) {
@@ -91,7 +91,7 @@ argparse_short_opt(struct argparser *this, const struct argparse_option *options
 }
 
 static int
-argparse_long_opt(struct argparser *this, const struct argparse_option *options)
+argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 {
     for (; options->type != OPTION_END; options++) {
         const char *rest;
@@ -114,7 +114,7 @@ argparse_long_opt(struct argparser *this, const struct argparse_option *options)
 }
 
 int
-argparse_init(struct argparser *this, struct argparse_option *options, const char *const *usage)
+argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage)
 {
     memset(this, 0, sizeof(this));
     this->options = options;
@@ -123,7 +123,7 @@ argparse_init(struct argparser *this, struct argparse_option *options, const cha
 }
 
 int
-argparse_parser(struct argparser *this, int argc, const char **argv)
+argparse_parser(struct argparse *this, int argc, const char **argv)
 {
     this->argc = argc - 1;
     this->argv = argv + 1;
@@ -174,7 +174,7 @@ unknown:
 }
 
 void
-argparse_usage(struct argparser *this)
+argparse_usage(struct argparse *this)
 {
     fprintf(stdout, "Usage: %s\n", *this->usage++);
     while (*this->usage && **this->usage)
@@ -205,7 +205,7 @@ argparse_usage(struct argparser *this)
 }
 
 int
-argparse_help_cb(struct argparser *this, struct argparse_option *option)
+argparse_help_cb(struct argparse *this, struct argparse_option *option)
 {
     argparse_usage(this);
     return 0;

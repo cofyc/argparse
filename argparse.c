@@ -56,7 +56,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
 
 no_value:
     if (opt->callback) {
-        return opt->callback(this, (struct argparse_option *)opt);
+        return opt->callback(this, opt);
     }
     return 0;
 }
@@ -205,7 +205,7 @@ argparse_usage(struct argparse *this)
 }
 
 int
-argparse_help_cb(struct argparse *this, struct argparse_option *option)
+argparse_help_cb(struct argparse *this, const struct argparse_option *option)
 {
     argparse_usage(this);
     return 0;

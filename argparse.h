@@ -27,7 +27,7 @@
 struct argparse;
 struct argparse_option;
 
-typedef int argparse_callback(struct argparse *this, struct argparse_option *option);
+typedef int argparse_callback(struct argparse *this, const struct argparse_option *option);
 
 enum argparse_option_type {
     /* special */
@@ -84,7 +84,7 @@ struct argparse {
 
 
 // builtin callbacks
-extern int argparse_help_cb(struct argparse *this, struct argparse_option *option);
+extern int argparse_help_cb(struct argparse *this, const struct argparse_option *option);
 
 // helper macros
 #define OPT_END()                       { OPTION_END }

@@ -2,18 +2,6 @@
 
 #define USAGE_OPTS_WIDTH 24
 
-/*  
- * argparse context
- */
-struct argparse_ctx {
-    int argc;
-    const char **argv;
-    const char **out;
-    int cpidx;
-    const char *arg;            // current argument
-    const char *optvalue;       // current option value
-};
-
 static const char *
 skip_prefix(const char *str, const char *prefix)
 {
@@ -22,9 +10,9 @@ skip_prefix(const char *str, const char *prefix)
 }
 
 static int
-argparse_error(struct argparse_ctx *ctx, const struct argparse_option *opt, const char *reason)
+argparse_error(struct argparser *this, const struct argparse_option *opt, const char *reason)
 {
-    if (!strncmp(ctx->arg, "--", 2)) {
+    if (!strncmp(this->arg, "--", 2)) {
         return fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
     } else {
         return fprintf(stderr, "error: option `%c` %s\n", opt->short_name, reason);
@@ -32,38 +20,45 @@ argparse_error(struct argparse_ctx *ctx, const struct argparse_option *opt, cons
 }
 
 static int
-argparse_getvalue(struct argparse_ctx *ctx, const struct argparse_option *opt)
+argparse_getvalue(struct argparser *this, const struct argparse_option *opt)
 {
     const char *s;
+    if (!opt->value) goto no_value;
     switch (opt->type) {
     case OPTION_BOOLEAN:
         *(int *)opt->value = *(int *)opt->value + 1;
-        return 0;
+        break;
     case OPTION_STRING:
-        if (ctx->optvalue) {
-            *(const char **)opt->value = ctx->optvalue;
-        } else if (ctx->argc > 1) {
-            ctx->argc--;
-            *(const char **)opt->value = *++ctx->argv;
+        if (this->optvalue) {
+            *(const char **)opt->value = this->optvalue;
+        } else if (this->argc > 1) {
+            this->argc--;
+            *(const char **)opt->value = *++this->argv;
         } else {
-            return argparse_error(ctx, opt, "requires a value");
+            return argparse_error(this, opt, "requires a value");
         }
-        return 0;
+        break;
     case OPTION_INTEGER:
-        if (strlen(ctx->arg) > 2) {
-            *(int *)opt->value = strtol(ctx->arg + 2, (char **)&s, 0);
-        } else if (ctx->argc > 1) {
-            ctx->argc--;
-            *(int *)opt->value = strtol(*++ctx->argv, (char **)&s, 0);
+        if (strlen(this->arg) > 2) {
+            *(int *)opt->value = strtol(this->arg + 2, (char **)&s, 0);
+        } else if (this->argc > 1) {
+            this->argc--;
+            *(int *)opt->value = strtol(*++this->argv, (char **)&s, 0);
         } else {
-            return argparse_error(ctx, opt, "requires a value");
+            return argparse_error(this, opt, "requires a value");
         }
         if (*s)
-            return argparse_error(ctx, opt, "expects a numerical value");
-        return 0;
+            return argparse_error(this, opt, "expects a numerical value");
+        break;
     default:
         assert(0);
     }
+
+no_value:
+    if (opt->callback) {
+        return opt->callback(this, (struct argparse_option *)opt);
+    }
+    return 0;
 }
 
 static void
@@ -84,61 +79,68 @@ argparse_options_check(const struct argparse_option *options)
 }
 
 static int
-argparse_short_opt(struct argparse_ctx *ctx, const struct argparse_option *options)
+argparse_short_opt(struct argparser *this, const struct argparse_option *options)
 {
     for (; options->type != OPTION_END; options++) {
-        if (options->short_name == *(ctx->argv[0] + 1)) {
-            ctx->arg = ctx->argv[0];
-            return argparse_getvalue(ctx, options);
+        if (options->short_name == *(this->argv[0] + 1)) {
+            this->arg = this->argv[0];
+            return argparse_getvalue(this, options);
         }
     }
     return -2;
 }
 
 static int
-argparse_long_opt(struct argparse_ctx *ctx, const struct argparse_option *options)
+argparse_long_opt(struct argparser *this, const struct argparse_option *options)
 {
     for (; options->type != OPTION_END; options++) {
         const char *rest;
         if (!options->long_name)
             continue;
 
-        rest = skip_prefix(ctx->argv[0] + 2, options->long_name);
+        rest = skip_prefix(this->argv[0] + 2, options->long_name);
         if (!rest) {
             continue;
         }
         if (*rest) {
             if (*rest != '=')
                 continue;
-            ctx->optvalue = rest + 1;
+            this->optvalue = rest + 1;
         }
-        ctx->arg = ctx->argv[0];
-        return argparse_getvalue(ctx, options);
+        this->arg = this->argv[0];
+        return argparse_getvalue(this, options);
     }
     return -2;
 }
 
 int
-argparse(int argc, const char **argv, const struct argparse_option *options, const char *const *usagestr)
+argparse_init(struct argparser *this, struct argparse_option *options, const char *const *usage)
 {
-    struct argparse_ctx ctx;
-    memset(&ctx, 0, sizeof(ctx));
-    ctx.argc = argc - 1;
-    ctx.argv = argv + 1;
-    ctx.out = argv;
+    memset(this, 0, sizeof(this));
+    this->options = options;
+    this->usage = usage;
+    return 0;
+}
 
-    argparse_options_check(options);
+int
+argparse_parser(struct argparser *this, int argc, const char **argv)
+{
+    this->argc = argc - 1;
+    this->argv = argv + 1;
+    this->out = argv;
 
-    for (; ctx.argc; ctx.argc--, ctx.argv++) {
-        const char *arg = ctx.argv[0];
+    argparse_options_check(this->options);
+
+    for (; this->argc; this->argc--, this->argv++) {
+        const char *arg = this->argv[0];
         if (arg[0] != '-' || !arg[1]) {
             // if it's not option or is a single char '-', copy verbatimly
-            ctx.out[ctx.cpidx++] = ctx.argv[0];
+            this->out[this->cpidx++] = this->argv[0];
             continue;
         }
         // short option
         if (arg[1] != '-') {
-            switch (argparse_short_opt(&ctx, options)) {
+            switch (argparse_short_opt(this, this->options)) {
             case -1:
                 break;
             case -2:
@@ -151,7 +153,7 @@ argparse(int argc, const char **argv, const struct argparse_option *options, con
             break;
         }
         // long option
-        switch (argparse_long_opt(&ctx, options)) {
+        switch (argparse_long_opt(this, this->options)) {
         case -1:
             break;
         case -2:
@@ -160,36 +162,36 @@ argparse(int argc, const char **argv, const struct argparse_option *options, con
         continue;
 
 unknown:
-        fprintf(stderr, "error: unknown option `%s`\n", ctx.argv[0]);
-        argparse_usage(usagestr, options);
+        fprintf(stderr, "error: unknown option `%s`\n", this->argv[0]);
+        argparse_usage(this);
         continue;
     }
 
-    memmove(ctx.out + ctx.cpidx, ctx.argv, ctx.argc * sizeof(*ctx.out));
-    ctx.out[ctx.cpidx + ctx.argc] = NULL;
+    memmove(this->out + this->cpidx, this->argv, this->argc * sizeof(*this->out));
+    this->out[this->cpidx + this->argc] = NULL;
 
-    return ctx.cpidx + ctx.argc;
+    return this->cpidx + this->argc;
 }
 
 void
-argparse_usage(const char *const *usagestr, const struct argparse_option *options)
+argparse_usage(struct argparser *this)
 {
-    fprintf(stdout, "Usage: %s\n", *usagestr++);
-    while (*usagestr && **usagestr)
-        fprintf(stdout, "    or: %s\n", *usagestr++);
+    fprintf(stdout, "Usage: %s\n", *this->usage++);
+    while (*this->usage && **this->usage)
+        fprintf(stdout, "    or: %s\n", *this->usage++);
     fputc('\n', stdout);
-    for (; options->type != OPTION_END; options++) {
+    for (; this->options->type != OPTION_END; this->options++) {
         size_t pos;
         int pad;
         pos = fprintf(stdout, "    ");
-        if (options->short_name) {
-            pos += fprintf(stdout, "-%c", options->short_name);
+        if (this->options->short_name) {
+            pos += fprintf(stdout, "-%c", this->options->short_name);
         }
-        if (options->long_name && options->short_name) {
+        if (this->options->long_name && this->options->short_name) {
             pos += fprintf(stdout, ", ");
         }
-        if (options->long_name) {
-            pos += fprintf(stdout, "--%s", options->long_name);
+        if (this->options->long_name) {
+            pos += fprintf(stdout, "--%s", this->options->long_name);
         }
         if (pos <= USAGE_OPTS_WIDTH) {
             pad = USAGE_OPTS_WIDTH - pos;
@@ -197,7 +199,7 @@ argparse_usage(const char *const *usagestr, const struct argparse_option *option
             fputc('\n', stdout);
             pad = USAGE_OPTS_WIDTH;
         }
-        fprintf(stdout, "%*s%s\n", pad + 2, "", options->help);
+        fprintf(stdout, "%*s%s\n", pad + 2, "", this->options->help);
     }
     exit(129);
 }

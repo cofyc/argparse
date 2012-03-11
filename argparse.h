@@ -24,7 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum argparse_opt_type {
+struct argparser;
+struct argparse_option;
+
+typedef int argparse_callback(struct argparser *this, struct argparse_option *option);
+
+enum argparse_option_type {
     /* special */
     OPTION_END,
     /* options with no arguments */
@@ -51,27 +56,38 @@ enum argparse_opt_type {
  *  `help`:
  *    the short help message associated to what the option does.
  *    Must never be NULL (except for OPTION_END).
- *
- *  `defval`:
- *    default value to fill.
  */
 struct argparse_option {
-    enum argparse_opt_type type;
+    enum argparse_option_type type;
     char short_name;
     const char *long_name;
     void *value;
     const char *help;
-    void *defval;
+    argparse_callback *callback;
 };
 
-#define OPT_END()                   { OPTION_END }
-#define OPT_BOOLEAN(s, l, v, h)     { OPTION_BOOLEAN, (s), (l), (v), (h) }
-#define OPT_INTEGER(s, l, v, h)     { OPTION_INTEGER, (s), (l), (v), (h) }
-#define OPT_STRING(s, l, v, h)      { OPTION_STRING, (s), (l), (v), (h) }
+/*
+ * argpparser
+ */
+struct argparser {
+    // user supplied
+    const struct argparse_option *options;
+    const char *const *usage;
+    // internal context
+    int argc;
+    const char **argv;
+    const char **out;
+    int cpidx;
+    const char *arg;            // current argument
+    const char *optvalue;       // current option value
+};
 
-extern int argparse(int argc, const char **argv, const struct argparse_option
-        *options, const char *const *usagestr);
-extern void argparse_usage(const char *const *usagestr, const struct 
-        argparse_option *options);
+#define OPT_END()                       { OPTION_END }
+#define OPT_BOOLEAN(s, l, v, h, c)      { OPTION_BOOLEAN, (s), (l), (v), (h), (c) }
+#define OPT_INTEGER(s, l, v, h, c)      { OPTION_INTEGER, (s), (l), (v), (h), (c) }
+#define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
 
+extern int argparse_init(struct argparser *this, struct argparse_option *options, const char *const *usage);
+extern int argparse_parser(struct argparser *this, int argc, const char **argv);
+extern void argparse_usage(struct argparser *this);
 #endif

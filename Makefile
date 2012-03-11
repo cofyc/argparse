@@ -5,12 +5,9 @@ test: test_argparse
 	@echo "######Testing#####"
 	@./test.sh
 
-test_argparse: test.o argparse.o
+test_argparse: test_argparse.o argparse.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-argparse.o: argparse.c
-test.o: test.c
-
 clean:
-	rm -rf test
+	rm -rf test_argparse
 	rm -rf *.o

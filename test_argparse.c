@@ -20,7 +20,7 @@ main(int argc, const char **argv)
     };
     struct argparse argparse;
     argparse_init(&argparse, options, usage);
-    argc = argparse_parser(&argparse, argc, argv);
+    argc = argparse_parse(&argparse, argc, argv);
     if (force != 0)
         printf("force: %d\n", force);
     if (path != NULL)

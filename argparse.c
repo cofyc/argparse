@@ -123,7 +123,7 @@ argparse_init(struct argparse *this, struct argparse_option *options, const char
 }
 
 int
-argparse_parser(struct argparse *this, int argc, const char **argv)
+argparse_parse(struct argparse *this, int argc, const char **argv)
 {
     this->argc = argc - 1;
     this->argv = argv + 1;

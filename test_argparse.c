@@ -6,21 +6,14 @@ static const char * const usage[] = {
 };
 
 int
-argparse_help(struct argparser *this, struct argparse_option *option)
-{
-    argparse_usage(this);
-    return 0;
-}
-
-int
 main(int argc, const char **argv)
 {
     int force = 0;
     int num = 0;
     const char *path = NULL;
     struct argparse_option options[] = {
+        OPT_HELP(),
         OPT_BOOLEAN('f', "force", &force, "force to do", NULL),
-        OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help),
         OPT_STRING('p', "path", &path, "path to read", NULL),
         OPT_INTEGER('n', "num", &num, "selected num", NULL),
         OPT_END(),

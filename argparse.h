@@ -82,10 +82,16 @@ struct argparser {
     const char *optvalue;       // current option value
 };
 
+
+// builtin callbacks
+extern int argparse_help_cb(struct argparser *this, struct argparse_option *option);
+
+// helper macros
 #define OPT_END()                       { OPTION_END }
 #define OPT_BOOLEAN(s, l, v, h, c)      { OPTION_BOOLEAN, (s), (l), (v), (h), (c) }
 #define OPT_INTEGER(s, l, v, h, c)      { OPTION_INTEGER, (s), (l), (v), (h), (c) }
 #define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
+#define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 extern int argparse_init(struct argparser *this, struct argparse_option *options, const char *const *usage);
 extern int argparse_parser(struct argparser *this, int argc, const char **argv);

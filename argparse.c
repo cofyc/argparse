@@ -203,3 +203,10 @@ argparse_usage(struct argparser *this)
     }
     exit(129);
 }
+
+int
+argparse_help_cb(struct argparser *this, struct argparse_option *option)
+{
+    argparse_usage(this);
+    return 0;
+}

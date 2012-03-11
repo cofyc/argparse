@@ -2,10 +2,15 @@ CFLAGS = -std=c99 -Wall -g3
 
 test: test_argparse
 	@echo
-	@echo "######Testing#####"
+	@echo "###### Unit Test #####"
 	@./test.sh
 
-test_argparse: test_argparse.o argparse.o
+OBJS += argparse.o
+OBJS += test_argparse.o
+
+$(OBJS): argparse.h
+
+test_argparse: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:

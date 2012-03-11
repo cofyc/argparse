@@ -67,7 +67,7 @@ struct argparse_option {
 };
 
 /*
- * argpparser
+ * argpparse
  */
 struct argparse {
     // user supplied
@@ -94,6 +94,6 @@ extern int argparse_help_cb(struct argparse *this, struct argparse_option *optio
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 extern int argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage);
-extern int argparse_parser(struct argparse *this, int argc, const char **argv);
+extern int argparse_parse(struct argparse *this, int argc, const char **argv);
 extern void argparse_usage(struct argparse *this);
 #endif

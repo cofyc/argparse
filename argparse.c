@@ -116,7 +116,7 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 int
 argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage)
 {
-    memset(this, 0, sizeof(this));
+    memset(this, 0, sizeof(*this));
     this->options = options;
     this->usage = usage;
     return 0;

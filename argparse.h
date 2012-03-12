@@ -6,10 +6,14 @@
  * This module is inspired by parse-options.c (git) and python's argparse
  * module.
  *
- * The program defines what arguments it requires, and `argparse` will figure out
- * how to parse those out of `argc` and `argv`, it also automatically generates
- * help and usage messages and issues errors when users give the program invalid
- * arguments:
+ * Arguments parsing is common task in cli program, but traditional `getopt`
+ * libraries is not easy to use. This library provides high-level arguments
+ * parsing solutions.
+ *
+ * The program defines what arguments it requires, and `argparse` will figure
+ * out how to parse those out of `argc` and `argv`, it also automatically
+ * generates help and usage messages and issues errors when users give the
+ * program invalid arguments:
  *
  * Features:
  *  - handles both optional and positional arguments

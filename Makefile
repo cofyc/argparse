@@ -1,4 +1,4 @@
-CFLAGS = -std=c99 -Wall -g3
+CFLAGS = -Wall -g3
 
 test: test_argparse
 	@echo

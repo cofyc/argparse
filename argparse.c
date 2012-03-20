@@ -1,7 +1,5 @@
 #include "argparse.h"
 
-#define USAGE_OPTS_WIDTH 24
-
 static const char *
 skip_prefix(const char *str, const char *prefix)
 {
@@ -10,12 +8,15 @@ skip_prefix(const char *str, const char *prefix)
 }
 
 static int
-argparse_error(struct argparse *this, const struct argparse_option *opt, const char *reason)
+argparse_error(struct argparse *this, const struct argparse_option *opt,
+               const char *reason)
 {
     if (!strncmp(this->arg, "--", 2)) {
-        return fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
+        return fprintf(stderr, "error: option `%s` %s\n", opt->long_name,
+                       reason);
     } else {
-        return fprintf(stderr, "error: option `%c` %s\n", opt->short_name, reason);
+        return fprintf(stderr, "error: option `%c` %s\n", opt->short_name,
+                       reason);
     }
 }
 
@@ -23,7 +24,8 @@ static int
 argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
 {
     const char *s;
-    if (!opt->value) goto no_value;
+    if (!opt->value)
+        goto no_value;
     switch (opt->type) {
     case OPTION_BOOLEAN:
         *(int *)opt->value = *(int *)opt->value + 1;
@@ -114,7 +116,8 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 }
 
 int
-argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage)
+argparse_init(struct argparse *this, struct argparse_option *options,
+              const char *const *usage)
 {
     memset(this, 0, sizeof(*this));
     this->options = options;
@@ -167,7 +170,8 @@ unknown:
         continue;
     }
 
-    memmove(this->out + this->cpidx, this->argv, this->argc * sizeof(*this->out));
+    memmove(this->out + this->cpidx, this->argv,
+            this->argc * sizeof(*this->out));
     this->out[this->cpidx + this->argc] = NULL;
 
     return this->cpidx + this->argc;
@@ -180,6 +184,29 @@ argparse_usage(struct argparse *this)
     while (*this->usage && **this->usage)
         fprintf(stdout, "    or: %s\n", *this->usage++);
     fputc('\n', stdout);
+
+    // figure out best width
+    int usage_opts_width = 0;
+    int i;
+    int len;
+    for (i = 0; (this->options + i)->type != OPTION_END; i++) {
+        len = 0;
+        if ((this->options + i)->short_name) {
+            len += 2;
+        }
+        if ((this->options + i)->short_name && (this->options + i)->long_name) {
+            len += 2;           // separator ", "
+        }
+        if ((this->options + i)->long_name) {
+            len += strlen((this->options + i)->long_name) + 2;
+        }
+        len = ceil((float)len / 4) * 4;
+        if (usage_opts_width < len) {
+            usage_opts_width = len;
+        }
+    }
+    usage_opts_width += 4;      // 4 spaces prefix
+
     for (; this->options->type != OPTION_END; this->options++) {
         size_t pos;
         int pad;
@@ -193,11 +220,11 @@ argparse_usage(struct argparse *this)
         if (this->options->long_name) {
             pos += fprintf(stdout, "--%s", this->options->long_name);
         }
-        if (pos <= USAGE_OPTS_WIDTH) {
-            pad = USAGE_OPTS_WIDTH - pos;
+        if (pos <= usage_opts_width) {
+            pad = usage_opts_width - pos;
         } else {
             fputc('\n', stdout);
-            pad = USAGE_OPTS_WIDTH;
+            pad = usage_opts_width;
         }
         fprintf(stdout, "%*s%s\n", pad + 2, "", this->options->help);
     }

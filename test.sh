@@ -18,9 +18,9 @@ is "$(./test_argparse -n2 2>&1)" 'num: 2'
 
 is "$(./test_argparse -na 2>&1)" 'error: option `n` expects a numerical value'
 
-is "$(./test_argparse --help 2>&1)" 'Usage: test-argparse [options]
+is "$(./test_argparse --help 2>&1)" 'Usage: test_argparse [options]
 
-    -h, --help            show this help message and exit
-    -f, --force           force to do
-    -p, --path            path to read
-    -n, --num             selected num'
+    -h, --help    show this help message and exit
+    -f, --force   force to do
+    -p, --path    path to read
+    -n, --num     selected num'

@@ -27,11 +27,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 struct argparse;
 struct argparse_option;
 
-typedef int argparse_callback(struct argparse *this, const struct argparse_option *option);
+typedef int argparse_callback(struct argparse *this,
+                              const struct argparse_option *option);
 
 enum argparse_option_type {
     /* special */
@@ -86,9 +88,9 @@ struct argparse {
     const char *optvalue;       // current option value
 };
 
-
 // builtin callbacks
-extern int argparse_help_cb(struct argparse *this, const struct argparse_option *option);
+extern int argparse_help_cb(struct argparse *this,
+                            const struct argparse_option *option);
 
 // helper macros
 #define OPT_END()                       { OPTION_END }
@@ -97,7 +99,8 @@ extern int argparse_help_cb(struct argparse *this, const struct argparse_option 
 #define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
-extern int argparse_init(struct argparse *this, struct argparse_option *options, const char *const *usage);
+extern int argparse_init(struct argparse *this, struct argparse_option *options,
+                         const char *const *usage);
 extern int argparse_parse(struct argparse *this, int argc, const char **argv);
 extern void argparse_usage(struct argparse *this);
 #endif

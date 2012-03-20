@@ -20,7 +20,7 @@
  *  - produces highly informative usage messages
  *  - issures errors when given invalid arguments
  *
- * @author Yecheng Fu <cofyc.jackson@gmail.com>
+ * Author: Yecheng Fu <cofyc.jackson@gmail.com>
  */
 
 #include <assert.h>

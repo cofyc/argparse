@@ -7,16 +7,16 @@ skip_prefix(const char *str, const char *prefix)
     return strncmp(str, prefix, len) ? NULL : str + len;
 }
 
-static int
+static void
 argparse_error(struct argparse *this, const struct argparse_option *opt,
                const char *reason)
 {
     if (!strncmp(this->arg, "--", 2)) {
-        return fprintf(stderr, "error: option `%s` %s\n", opt->long_name,
-                       reason);
+        fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
+        exit(-1);
     } else {
-        return fprintf(stderr, "error: option `%c` %s\n", opt->short_name,
-                       reason);
+        fprintf(stderr, "error: option `%c` %s\n", opt->short_name, reason);
+        exit(-1);
     }
 }
 
@@ -25,7 +25,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
 {
     const char *s;
     if (!opt->value)
-        goto no_value;
+        goto skipped;
     switch (opt->type) {
     case OPTION_BOOLEAN:
         *(int *)opt->value = *(int *)opt->value + 1;
@@ -37,7 +37,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
             this->argc--;
             *(const char **)opt->value = *++this->argv;
         } else {
-            return argparse_error(this, opt, "requires a value");
+            argparse_error(this, opt, "requires a value");
         }
         break;
     case OPTION_INTEGER:
@@ -47,16 +47,16 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
             this->argc--;
             *(int *)opt->value = strtol(*++this->argv, (char **)&s, 0);
         } else {
-            return argparse_error(this, opt, "requires a value");
+            argparse_error(this, opt, "requires a value");
         }
         if (*s)
-            return argparse_error(this, opt, "expects a numerical value");
+            argparse_error(this, opt, "expects a numerical value");
         break;
     default:
         assert(0);
     }
 
-no_value:
+skipped:
     if (opt->callback) {
         return opt->callback(this, opt);
     }
@@ -228,7 +228,7 @@ argparse_usage(struct argparse *this)
         }
         fprintf(stdout, "%*s%s\n", pad + 2, "", this->options->help);
     }
-    exit(129);
+    exit(0);
 }
 
 int

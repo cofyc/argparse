@@ -7,13 +7,13 @@
  * module.
  *
  * Arguments parsing is common task in cli program, but traditional `getopt`
- * libraries is not easy to use. This library provides high-level arguments
+ * libraries are not easy to use. This library provides high-level arguments
  * parsing solutions.
  *
  * The program defines what arguments it requires, and `argparse` will figure
  * out how to parse those out of `argc` and `argv`, it also automatically
  * generates help and usage messages and issues errors when users give the
- * program invalid arguments:
+ * program invalid arguments.
  *
  * Features:
  *  - handles both optional and positional arguments
@@ -62,6 +62,9 @@ enum argparse_option_type {
  *  `help`:
  *    the short help message associated to what the option does.
  *    Must never be NULL (except for OPTION_END).
+ *
+ *  `callback`:
+ *   function is called when corresponding argument is provided
  */
 struct argparse_option {
     enum argparse_option_type type;
@@ -89,8 +92,8 @@ struct argparse {
 };
 
 // builtin callbacks
-extern int argparse_help_cb(struct argparse *this,
-                            const struct argparse_option *option);
+int argparse_help_cb(struct argparse *this,
+                     const struct argparse_option *option);
 
 // helper macros
 #define OPT_END()                       { OPTION_END }
@@ -99,8 +102,9 @@ extern int argparse_help_cb(struct argparse *this,
 #define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
-extern int argparse_init(struct argparse *this, struct argparse_option *options,
-                         const char *const *usage);
-extern int argparse_parse(struct argparse *this, int argc, const char **argv);
-extern void argparse_usage(struct argparse *this);
+int argparse_init(struct argparse *this, struct argparse_option *options,
+                  const char *const *usage);
+int argparse_parse(struct argparse *this, int argc, const char **argv);
+void argparse_usage(struct argparse *this);
+
 #endif

@@ -5,7 +5,7 @@ This module is inspired by parse-options.c (git) and python's argparse
 module.
 
 Arguments parsing is common task in cli program, but traditional `getopt`
-libraries is not easy to use. This library provides high-level arguments
+libraries are not easy to use. This library provides high-level arguments
 parsing solutions.
 
 The program defines what arguments it requires, and `argparse` will figure

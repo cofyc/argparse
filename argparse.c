@@ -234,5 +234,6 @@ int
 argparse_help_cb(struct argparse *this, const struct argparse_option *option)
 {
     argparse_usage(this);
+    exit(0);
     return 0;
 }

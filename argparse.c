@@ -167,7 +167,7 @@ argparse_parse(struct argparse *this, int argc, const char **argv)
 unknown:
         fprintf(stderr, "error: unknown option `%s`\n", this->argv[0]);
         argparse_usage(this);
-        continue;
+        exit(0);
     }
 
     memmove(this->out + this->cpidx, this->argv,
@@ -228,7 +228,6 @@ argparse_usage(struct argparse *this)
         }
         fprintf(stdout, "%*s%s\n", pad + 2, "", this->options->help);
     }
-    exit(0);
 }
 
 int

@@ -117,11 +117,12 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 
 int
 argparse_init(struct argparse *this, struct argparse_option *options,
-              const char *const *usage)
+              const char *const *usage, int flags)
 {
     memset(this, 0, sizeof(*this));
     this->options = options;
     this->usage = usage;
+    this->flags = flags;
     return 0;
 }
 
@@ -137,6 +138,9 @@ argparse_parse(struct argparse *this, int argc, const char **argv)
     for (; this->argc; this->argc--, this->argv++) {
         const char *arg = this->argv[0];
         if (arg[0] != '-' || !arg[1]) {
+            if (this->flags & ARGPARSE_STOP_AT_NON_OPTION) {
+                goto end;
+            }
             // if it's not option or is a single char '-', copy verbatimly
             this->out[this->cpidx++] = this->argv[0];
             continue;
@@ -170,6 +174,7 @@ unknown:
         exit(0);
     }
 
+end:
     memmove(this->out + this->cpidx, this->argv,
             this->argc * sizeof(*this->out));
     this->out[this->cpidx + this->argc] = NULL;

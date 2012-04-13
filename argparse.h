@@ -35,6 +35,10 @@ struct argparse_option;
 typedef int argparse_callback(struct argparse *this,
                               const struct argparse_option *option);
 
+enum argparse_flag {
+    ARGPARSE_STOP_AT_NON_OPTION = 1,
+};
+
 enum argparse_option_type {
     /* special */
     OPTION_END,
@@ -82,6 +86,7 @@ struct argparse {
     // user supplied
     const struct argparse_option *options;
     const char *const *usage;
+    int flags;
     // internal context
     int argc;
     const char **argv;
@@ -103,7 +108,7 @@ int argparse_help_cb(struct argparse *this,
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 int argparse_init(struct argparse *this, struct argparse_option *options,
-                  const char *const *usage);
+                  const char *const *usage, int flags);
 int argparse_parse(struct argparse *this, int argc, const char **argv);
 void argparse_usage(struct argparse *this);
 

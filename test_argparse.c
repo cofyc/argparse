@@ -19,7 +19,7 @@ main(int argc, const char **argv)
         OPT_END(),
     };
     struct argparse argparse;
-    argparse_init(&argparse, options, usage);
+    argparse_init(&argparse, options, usage, 0);
     argc = argparse_parse(&argparse, argc, argv);
     if (force != 0)
         printf("force: %d\n", force);

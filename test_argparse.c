@@ -1,7 +1,7 @@
 #include "argparse.h"
 
 static const char *const usage[] = {
-    "test_argparse [options]",
+    "test_argparse [options] [[--] args]",
     NULL,
 };
 

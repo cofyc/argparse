@@ -22,8 +22,10 @@ Features:
 Examples:
 =========
 
-    static const char * const usage[] = {
-        "test-argparse [options]",
+    #include "argparse.h"
+
+    static const char *const usage[] = {
+        "test_argparse [options] [[--] args]",
         NULL,
     };
 

@@ -1,4 +1,5 @@
-CFLAGS = -Wall -g3 -lm
+CFLAGS = -Wall -g3
+LDFLAGS = -lm
 
 test: test_argparse
 	@echo
@@ -11,7 +12,7 @@ OBJS += test_argparse.o
 $(OBJS): argparse.h
 
 test_argparse: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
 	rm -rf test_argparse

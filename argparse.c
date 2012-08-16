@@ -157,6 +157,8 @@ argparse_parse(struct argparse *this, int argc, const char **argv)
         }
         // if '--' presents
         if (!arg[2]) {
+            this->argc--;
+            this->argv++;
             break;
         }
         // long option

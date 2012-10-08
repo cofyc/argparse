@@ -11,7 +11,7 @@ static void
 argparse_error(struct argparse *this, const struct argparse_option *opt,
                const char *reason)
 {
-    if (!strncmp(this->arg, "--", 2)) {
+    if (!strncmp(this->argv[0], "--", 2)) {
         fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
         exit(-1);
     } else {
@@ -33,6 +33,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
     case OPTION_STRING:
         if (this->optvalue) {
             *(const char **)opt->value = this->optvalue;
+            this->optvalue = NULL;
         } else if (this->argc > 1) {
             this->argc--;
             *(const char **)opt->value = *++this->argv;
@@ -41,8 +42,9 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
         }
         break;
     case OPTION_INTEGER:
-        if (strlen(this->arg) > 2) {
-            *(int *)opt->value = strtol(this->arg + 2, (char **)&s, 0);
+        if (this->optvalue) {
+            *(int *)opt->value = strtol(this->optvalue, (char **)&s, 0);
+            this->optvalue = NULL;
         } else if (this->argc > 1) {
             this->argc--;
             *(int *)opt->value = strtol(*++this->argv, (char **)&s, 0);
@@ -60,6 +62,7 @@ skipped:
     if (opt->callback) {
         return opt->callback(this, opt);
     }
+
     return 0;
 }
 
@@ -84,8 +87,8 @@ static int
 argparse_short_opt(struct argparse *this, const struct argparse_option *options)
 {
     for (; options->type != OPTION_END; options++) {
-        if (options->short_name == *(this->argv[0] + 1)) {
-            this->arg = this->argv[0];
+        if (options->short_name == *this->optvalue) {
+            this->optvalue = this->optvalue[1] ? this->optvalue + 1 : NULL;
             return argparse_getvalue(this, options);
         }
     }
@@ -109,7 +112,6 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
                 continue;
             this->optvalue = rest + 1;
         }
-        this->arg = this->argv[0];
         return argparse_getvalue(this, options);
     }
     return -2;
@@ -147,11 +149,20 @@ argparse_parse(struct argparse *this, int argc, const char **argv)
         }
         // short option
         if (arg[1] != '-') {
+            this->optvalue = arg + 1;
             switch (argparse_short_opt(this, this->options)) {
             case -1:
                 break;
             case -2:
                 goto unknown;
+            }
+            while (this->optvalue) {
+                switch (argparse_short_opt(this, this->options)) {
+                case -1:
+                    break;
+                case -2:
+                    goto unknown;
+                }
             }
             continue;
         }

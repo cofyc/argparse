@@ -44,7 +44,7 @@ enum argparse_option_type {
     OPTION_END,
     /* options with no arguments */
     OPTION_BOOLEAN,
-    /* options with arguments */
+    /* options with arguments (optional or required) */
     OPTION_INTEGER,
     OPTION_STRING,
 };
@@ -68,11 +68,11 @@ enum argparse_option_type {
  *    Must never be NULL (except for OPTION_END).
  *
  *  `callback`:
- *   function is called when corresponding argument is provided
+ *    function is called when corresponding argument is parsed.
  */
 struct argparse_option {
     enum argparse_option_type type;
-    char short_name;
+    const char short_name;
     const char *long_name;
     void *value;
     const char *help;
@@ -92,7 +92,6 @@ struct argparse {
     const char **argv;
     const char **out;
     int cpidx;
-    const char *arg;            // current argument
     const char *optvalue;       // current option value
 };
 

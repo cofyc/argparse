@@ -9,11 +9,13 @@ int
 main(int argc, const char **argv)
 {
     int force = 0;
+    int test = 0;
     int num = 0;
     const char *path = NULL;
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_BOOLEAN('f', "force", &force, "force to do", NULL),
+        OPT_BOOLEAN('t', "test", &test, "test only", NULL),
         OPT_STRING('p', "path", &path, "path to read", NULL),
         OPT_INTEGER('n', "num", &num, "selected num", NULL),
         OPT_END(),
@@ -23,6 +25,8 @@ main(int argc, const char **argv)
     argc = argparse_parse(&argparse, argc, argv);
     if (force != 0)
         printf("force: %d\n", force);
+    if (test != 0)
+        printf("test: %d\n", test);
     if (path != NULL)
         printf("path: %s\n", path);
     if (num != 0)

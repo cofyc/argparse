@@ -1,6 +1,8 @@
 CFLAGS = -Wall -g3
 LDFLAGS = -lm
 
+all: test_argparse
+
 test: test_argparse
 	@echo
 	@echo "###### Unit Test #####"

@@ -22,6 +22,7 @@ is "$(./test_argparse --help 2>&1)" 'Usage: test_argparse [options] [[--] args]
 
     -h, --help    show this help message and exit
     -f, --force   force to do
+    -t, --test    test only
     -p, --path    path to read
     -n, --num     selected num'
 
@@ -30,3 +31,6 @@ argc: 3
 argv[0]: do
 argv[1]: -f
 argv[2]: -h'
+
+is "$(./test_argparse -tf 2>&1)" 'force: 1
+test: 1'

@@ -1,10 +1,22 @@
 #include "argparse.h"
 
+#define OPT_UNSET 1
+
 static const char *
-skip_prefix(const char *str, const char *prefix)
+prefix_skip(const char *str, const char *prefix)
 {
     size_t len = strlen(prefix);
     return strncmp(str, prefix, len) ? NULL : str + len;
+}
+
+int
+prefix_cmp(const char *str, const char *prefix)
+{
+    for (;; str++, prefix++)
+        if (!*prefix)
+            return 0;
+        else if (*str != *prefix)
+            return (unsigned char)*prefix - (unsigned char)*str;
 }
 
 static void
@@ -21,7 +33,8 @@ argparse_error(struct argparse *this, const struct argparse_option *opt,
 }
 
 static int
-argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
+argparse_getvalue(struct argparse *this, const struct argparse_option *opt,
+                  int flags)
 {
     const char *s;
     if (!opt->value)
@@ -31,7 +44,11 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
         *(int *)opt->value = *(int *)opt->value + 1;
         break;
     case ARGPARSE_OPT_BIT:
-        *(int *)opt->value |= opt->data;
+        if (flags & OPT_UNSET) {
+            *(int *)opt->value &= ~opt->data;
+        } else {
+            *(int *)opt->value |= opt->data;
+        }
         break;
     case ARGPARSE_OPT_STRING:
         if (this->optvalue) {
@@ -93,7 +110,7 @@ argparse_short_opt(struct argparse *this, const struct argparse_option *options)
     for (; options->type != ARGPARSE_OPT_END; options++) {
         if (options->short_name == *this->optvalue) {
             this->optvalue = this->optvalue[1] ? this->optvalue + 1 : NULL;
-            return argparse_getvalue(this, options);
+            return argparse_getvalue(this, options, 0);
         }
     }
     return -2;
@@ -104,19 +121,32 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 {
     for (; options->type != ARGPARSE_OPT_END; options++) {
         const char *rest;
+        int opt_flags = 0;
         if (!options->long_name)
             continue;
 
-        rest = skip_prefix(this->argv[0] + 2, options->long_name);
+        rest = prefix_skip(this->argv[0] + 2, options->long_name);
         if (!rest) {
-            continue;
+            // Negation alloed?
+            if (options->flags & OPT_NONEG) {
+                continue;
+            }
+
+            if (!prefix_cmp(this->argv[0] + 2, "no-")) {
+                rest = prefix_skip(this->argv[0] + 2 + 3, options->long_name);
+                if (!rest)
+                    continue;
+                opt_flags |= OPT_UNSET;
+            } else {
+                continue;
+            }
         }
         if (*rest) {
             if (*rest != '=')
                 continue;
             this->optvalue = rest + 1;
         }
-        return argparse_getvalue(this, options);
+        return argparse_getvalue(this, options, opt_flags);
     }
     return -2;
 }

@@ -49,8 +49,7 @@ enum argparse_option_type {
 };
 
 enum argparse_option_flags {
-    OPT_OPTARG,
-    OPT_NOARG,
+    OPT_NONEG = 1,              /* Negation disabled. */
 };
 
 /*

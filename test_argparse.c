@@ -19,13 +19,13 @@ main(int argc, const char **argv)
     int perms = 0;
     struct argparse_option options[] = {
         OPT_HELP(),
-        OPT_BOOLEAN('f', "force", &force, "force to do", NULL),
-        OPT_BOOLEAN('t', "test", &test, "test only", NULL),
-        OPT_STRING('p', "path", &path, "path to read", NULL),
-        OPT_INTEGER('n', "num", &num, "selected num", NULL),
-        OPT_SETBIT(0, "read", &perms, "read perm", NULL, PERM_READ),
-        OPT_SETBIT(0, "write", &perms, "write perm", NULL, PERM_WRITE),
-        OPT_SETBIT(0, "exec", &perms, "exec perm", NULL, PERM_EXEC),
+        OPT_BOOLEAN('f', "force", &force, "force to do"),
+        OPT_BOOLEAN('t', "test", &test, "test only"),
+        OPT_STRING('p', "path", &path, "path to read"),
+        OPT_INTEGER('n', "num", &num, "selected num"),
+        OPT_BIT(0, "read", &perms, "read perm", NULL, PERM_READ),
+        OPT_BIT(0, "write", &perms, "write perm", NULL, PERM_WRITE),
+        OPT_BIT(0, "exec", &perms, "exec perm", NULL, PERM_EXEC),
         OPT_END(),
     };
 

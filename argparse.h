@@ -15,11 +15,9 @@
  * generates help and usage messages and issues errors when users give the
  * program invalid arguments.
  *
- * Features:
- *  - handles both optional and positional arguments
- *  - produces highly informative usage messages
- *  - issures errors when given invalid arguments
- *
+ * Reserved namespaces:
+ *  argparse
+ *  OPT
  * Author: Yecheng Fu <cofyc.jackson@gmail.com>
  */
 
@@ -41,18 +39,25 @@ enum argparse_flag {
 
 enum argparse_option_type {
     /* special */
-    OPTION_END,
+    ARGPARSE_OPT_END,
     /* options with no arguments */
-    OPTION_BOOLEAN,
-    OPTION_SETBIT,
+    ARGPARSE_OPT_BOOLEAN,
+    ARGPARSE_OPT_BIT,
     /* options with arguments (optional or required) */
-    OPTION_INTEGER,
-    OPTION_STRING,
+    ARGPARSE_OPT_INTEGER,
+    ARGPARSE_OPT_STRING,
+};
+
+enum argparse_option_flags {
+    OPT_OPTARG,
+    OPT_NOARG,
 };
 
 /*
+ *  Argparse option struct.
+ *
  *  `type`:
- *    holds the type of the option, you must have an OPTION_END last in your
+ *    holds the type of the option, you must have an ARGPARSE_OPT_END last in your
  *    array.
  *
  *  `short_name`:
@@ -66,13 +71,17 @@ enum argparse_option_type {
  *
  *  `help`:
  *    the short help message associated to what the option does.
- *    Must never be NULL (except for OPTION_END).
+ *    Must never be NULL (except for ARGPARSE_OPT_END).
  *
  *  `callback`:
  *    function is called when corresponding argument is parsed.
  *
  *  `data`:
  *    associated data. Callbacks can use it like they want.
+ *
+ *  `flags`:
+ *    option flags.
+ *
  */
 struct argparse_option {
     enum argparse_option_type type;
@@ -82,6 +91,7 @@ struct argparse_option {
     const char *help;
     argparse_callback *callback;
     intptr_t data;
+    int flags;
 };
 
 /*
@@ -104,13 +114,13 @@ struct argparse {
 int argparse_help_cb(struct argparse *this,
                      const struct argparse_option *option);
 
-// helper macros
-#define OPT_END()                       { OPTION_END }
-#define OPT_BOOLEAN(s, l, v, h, c)      { OPTION_BOOLEAN, (s), (l), (v), (h), (c), 0 }
-#define OPT_SETBIT(s, l, v, h, c, d)    { OPTION_SETBIT, (s), (l), (v), (h), (c), (d) }
-#define OPT_INTEGER(s, l, v, h, c)      { OPTION_INTEGER, (s), (l), (v), (h), (c), 0 }
-#define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c), 0 }
-#define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
+// builtin option macros
+#define OPT_END()          { ARGPARSE_OPT_END }
+#define OPT_BOOLEAN(...)   { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ }
+#define OPT_BIT(...)       { ARGPARSE_OPT_BIT, __VA_ARGS__ }
+#define OPT_INTEGER(...)   { ARGPARSE_OPT_INTEGER, __VA_ARGS__ }
+#define OPT_STRING(...)    { ARGPARSE_OPT_STRING, __VA_ARGS__ }
+#define OPT_HELP()         OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 int argparse_init(struct argparse *this, struct argparse_option *options,
                   const char *const *usage, int flags);

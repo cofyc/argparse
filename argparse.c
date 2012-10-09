@@ -27,13 +27,13 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
     if (!opt->value)
         goto skipped;
     switch (opt->type) {
-    case OPTION_BOOLEAN:
+    case ARGPARSE_OPT_BOOLEAN:
         *(int *)opt->value = *(int *)opt->value + 1;
         break;
-    case OPTION_SETBIT:
+    case ARGPARSE_OPT_BIT:
         *(int *)opt->value |= opt->data;
         break;
-    case OPTION_STRING:
+    case ARGPARSE_OPT_STRING:
         if (this->optvalue) {
             *(const char **)opt->value = this->optvalue;
             this->optvalue = NULL;
@@ -44,7 +44,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
             argparse_error(this, opt, "requires a value");
         }
         break;
-    case OPTION_INTEGER:
+    case ARGPARSE_OPT_INTEGER:
         if (this->optvalue) {
             *(int *)opt->value = strtol(this->optvalue, (char **)&s, 0);
             this->optvalue = NULL;
@@ -72,13 +72,13 @@ skipped:
 static void
 argparse_options_check(const struct argparse_option *options)
 {
-    for (; options->type != OPTION_END; options++) {
+    for (; options->type != ARGPARSE_OPT_END; options++) {
         switch (options->type) {
-        case OPTION_END:
-        case OPTION_BOOLEAN:
-        case OPTION_SETBIT:
-        case OPTION_INTEGER:
-        case OPTION_STRING:
+        case ARGPARSE_OPT_END:
+        case ARGPARSE_OPT_BOOLEAN:
+        case ARGPARSE_OPT_BIT:
+        case ARGPARSE_OPT_INTEGER:
+        case ARGPARSE_OPT_STRING:
             continue;
         default:
             fprintf(stderr, "wrong option type: %d", options->type);
@@ -90,7 +90,7 @@ argparse_options_check(const struct argparse_option *options)
 static int
 argparse_short_opt(struct argparse *this, const struct argparse_option *options)
 {
-    for (; options->type != OPTION_END; options++) {
+    for (; options->type != ARGPARSE_OPT_END; options++) {
         if (options->short_name == *this->optvalue) {
             this->optvalue = this->optvalue[1] ? this->optvalue + 1 : NULL;
             return argparse_getvalue(this, options);
@@ -102,7 +102,7 @@ argparse_short_opt(struct argparse *this, const struct argparse_option *options)
 static int
 argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 {
-    for (; options->type != OPTION_END; options++) {
+    for (; options->type != ARGPARSE_OPT_END; options++) {
         const char *rest;
         if (!options->long_name)
             continue;
@@ -211,7 +211,7 @@ argparse_usage(struct argparse *this)
     int usage_opts_width = 0;
     int i;
     int len;
-    for (i = 0; (this->options + i)->type != OPTION_END; i++) {
+    for (i = 0; (this->options + i)->type != ARGPARSE_OPT_END; i++) {
         len = 0;
         if ((this->options + i)->short_name) {
             len += 2;
@@ -229,7 +229,7 @@ argparse_usage(struct argparse *this)
     }
     usage_opts_width += 4;      // 4 spaces prefix
 
-    for (; this->options->type != OPTION_END; this->options++) {
+    for (; this->options->type != ARGPARSE_OPT_END; this->options++) {
         size_t pos;
         int pad;
         pos = fprintf(stdout, "    ");

@@ -5,6 +5,10 @@ static const char *const usage[] = {
     NULL,
 };
 
+#define PERM_READ  (1<<0)
+#define PERM_WRITE (1<<1)
+#define PERM_EXEC  (1<<2)
+
 int
 main(int argc, const char **argv)
 {
@@ -12,14 +16,19 @@ main(int argc, const char **argv)
     int test = 0;
     int num = 0;
     const char *path = NULL;
+    int perms = 0;
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_BOOLEAN('f', "force", &force, "force to do", NULL),
         OPT_BOOLEAN('t', "test", &test, "test only", NULL),
         OPT_STRING('p', "path", &path, "path to read", NULL),
         OPT_INTEGER('n', "num", &num, "selected num", NULL),
+        OPT_SETBIT(0, "read", &perms, "read perm", NULL, PERM_READ),
+        OPT_SETBIT(0, "write", &perms, "write perm", NULL, PERM_WRITE),
+        OPT_SETBIT(0, "exec", &perms, "exec perm", NULL, PERM_EXEC),
         OPT_END(),
     };
+
     struct argparse argparse;
     argparse_init(&argparse, options, usage, 0);
     argc = argparse_parse(&argparse, argc, argv);
@@ -37,6 +46,9 @@ main(int argc, const char **argv)
         for (i = 0; i < argc; i++) {
             printf("argv[%d]: %s\n", i, *(argv + i));
         }
+    }
+    if (perms) {
+        printf("perms: %d\n", perms);
     }
     return 0;
 }

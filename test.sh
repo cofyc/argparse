@@ -24,7 +24,10 @@ is "$(./test_argparse --help 2>&1)" 'Usage: test_argparse [options] [[--] args]
     -f, --force   force to do
     -t, --test    test only
     -p, --path    path to read
-    -n, --num     selected num'
+    -n, --num     selected num
+    --read        read perm
+    --write       write perm
+    --exec        exec perm'
 
 is "$(./test_argparse -f -- do -f -h 2>&1)" 'force: 1
 argc: 3
@@ -34,3 +37,5 @@ argv[2]: -h'
 
 is "$(./test_argparse -tf 2>&1)" 'force: 1
 test: 1'
+
+is "$(./test_argparse --read --write 2>&1)" 'perms: 3'

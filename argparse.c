@@ -30,6 +30,9 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt)
     case OPTION_BOOLEAN:
         *(int *)opt->value = *(int *)opt->value + 1;
         break;
+    case OPTION_SETBIT:
+        *(int *)opt->value |= opt->data;
+        break;
     case OPTION_STRING:
         if (this->optvalue) {
             *(const char **)opt->value = this->optvalue;
@@ -73,6 +76,7 @@ argparse_options_check(const struct argparse_option *options)
         switch (options->type) {
         case OPTION_END:
         case OPTION_BOOLEAN:
+        case OPTION_SETBIT:
         case OPTION_INTEGER:
         case OPTION_STRING:
             continue;

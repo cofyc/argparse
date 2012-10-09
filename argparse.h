@@ -44,6 +44,7 @@ enum argparse_option_type {
     OPTION_END,
     /* options with no arguments */
     OPTION_BOOLEAN,
+    OPTION_SETBIT,
     /* options with arguments (optional or required) */
     OPTION_INTEGER,
     OPTION_STRING,
@@ -69,6 +70,9 @@ enum argparse_option_type {
  *
  *  `callback`:
  *    function is called when corresponding argument is parsed.
+ *
+ *  `data`:
+ *    associated data. Callbacks can use it like they want.
  */
 struct argparse_option {
     enum argparse_option_type type;
@@ -77,6 +81,7 @@ struct argparse_option {
     void *value;
     const char *help;
     argparse_callback *callback;
+    intptr_t data;
 };
 
 /*
@@ -101,9 +106,10 @@ int argparse_help_cb(struct argparse *this,
 
 // helper macros
 #define OPT_END()                       { OPTION_END }
-#define OPT_BOOLEAN(s, l, v, h, c)      { OPTION_BOOLEAN, (s), (l), (v), (h), (c) }
-#define OPT_INTEGER(s, l, v, h, c)      { OPTION_INTEGER, (s), (l), (v), (h), (c) }
-#define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c) }
+#define OPT_BOOLEAN(s, l, v, h, c)      { OPTION_BOOLEAN, (s), (l), (v), (h), (c), 0 }
+#define OPT_SETBIT(s, l, v, h, c, d)    { OPTION_SETBIT, (s), (l), (v), (h), (c), (d) }
+#define OPT_INTEGER(s, l, v, h, c)      { OPTION_INTEGER, (s), (l), (v), (h), (c), 0 }
+#define OPT_STRING(s, l, v, h, c)       { OPTION_STRING, (s), (l), (v), (h), (c), 0 }
 #define OPT_HELP()                      OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 int argparse_init(struct argparse *this, struct argparse_option *options,

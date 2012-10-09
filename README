@@ -18,7 +18,6 @@ Features:
  - handles both optional and positional arguments
  - produces highly informative usage messages
  - issures errors when given invalid arguments
- - long options may be abbreviated, as long as the abbreviation is unambiguous
  - short options may be bundled, e.g. `-a -b` can be specified as `-ab`
 
 Examples:

@@ -237,20 +237,27 @@ argparse_usage(struct argparse *this)
         fprintf(stdout, "    or: %s\n", *this->usage++);
     fputc('\n', stdout);
 
+    const struct argparse_option *options;
+
     // figure out best width
     int usage_opts_width = 0;
-    int i;
     int len;
-    for (i = 0; (this->options + i)->type != ARGPARSE_OPT_END; i++) {
+    options = this->options;
+    for (; options->type != ARGPARSE_OPT_END; options++) {
         len = 0;
-        if ((this->options + i)->short_name) {
+        if ((options)->short_name) {
             len += 2;
         }
-        if ((this->options + i)->short_name && (this->options + i)->long_name) {
+        if ((options)->short_name && (options)->long_name) {
             len += 2;           // separator ", "
         }
-        if ((this->options + i)->long_name) {
-            len += strlen((this->options + i)->long_name) + 2;
+        if ((options)->long_name) {
+            len += strlen((options)->long_name) + 2;
+        }
+        if (options->type == ARGPARSE_OPT_INTEGER) {
+            len += strlen(" <int>");
+        } else if (options->type == ARGPARSE_OPT_STRING) {
+            len += strlen(" <str>");
         }
         len = ceil((float)len / 4) * 4;
         if (usage_opts_width < len) {
@@ -259,18 +266,24 @@ argparse_usage(struct argparse *this)
     }
     usage_opts_width += 4;      // 4 spaces prefix
 
-    for (; this->options->type != ARGPARSE_OPT_END; this->options++) {
+    options = this->options;
+    for (; options->type != ARGPARSE_OPT_END; options++) {
         size_t pos;
         int pad;
         pos = fprintf(stdout, "    ");
-        if (this->options->short_name) {
-            pos += fprintf(stdout, "-%c", this->options->short_name);
+        if (options->short_name) {
+            pos += fprintf(stdout, "-%c", options->short_name);
         }
-        if (this->options->long_name && this->options->short_name) {
+        if (options->long_name && options->short_name) {
             pos += fprintf(stdout, ", ");
         }
-        if (this->options->long_name) {
-            pos += fprintf(stdout, "--%s", this->options->long_name);
+        if (options->long_name) {
+            pos += fprintf(stdout, "--%s", options->long_name);
+        }
+        if (options->type == ARGPARSE_OPT_INTEGER) {
+            pos += fprintf(stdout, " <int>");
+        } else if (options->type == ARGPARSE_OPT_STRING) {
+            pos += fprintf(stdout, " <str>");
         }
         if (pos <= usage_opts_width) {
             pad = usage_opts_width - pos;
@@ -278,7 +291,7 @@ argparse_usage(struct argparse *this)
             fputc('\n', stdout);
             pad = usage_opts_width;
         }
-        fprintf(stdout, "%*s%s\n", pad + 2, "", this->options->help);
+        fprintf(stdout, "%*s%s\n", pad + 2, "", options->help);
     }
 }
 

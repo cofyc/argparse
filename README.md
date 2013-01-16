@@ -1,5 +1,10 @@
-Command-line arguments parsing library.
-=======================================
+NAME
+====
+
+argparse - A command line arguments parsing library.
+
+DESCRIPTION
+===========
 
 This module is inspired by parse-options.c (git) and python's argparse
 module.
@@ -13,18 +18,21 @@ out how to parse those out of `argc` and `argv`, it also automatically
 generates help and usage messages and issues errors when users give the
 program invalid arguments.
 
-Features:
-=========
+Features
+========
+
  - handles both optional and positional arguments
  - produces highly informative usage messages
  - issures errors when given invalid arguments
 
 There are basically three types of options:
+
  - boolean options
  - options with mandatory argument
  - options with optional argument
 
 There are basically two forms of options:
+
  - short option consist of one dash (`-`) and one alphanumeric character.
  - long option begin with two dashes (`--`) and some alphanumeric characters.
 
@@ -34,8 +42,8 @@ Options are case-sensitive.
 
 Options and non-option arguments can clearly be separated using the `--` option.
 
-Examples:
-=========
+Examples
+========
 
     #include "argparse.h"
 

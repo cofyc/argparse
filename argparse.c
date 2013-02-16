@@ -41,7 +41,14 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt,
         goto skipped;
     switch (opt->type) {
     case ARGPARSE_OPT_BOOLEAN:
-        *(int *)opt->value = *(int *)opt->value + 1;
+        if (flags & OPT_UNSET) {
+            *(int *)opt->value = *(int *)opt->value - 1;
+        } else {
+            *(int *)opt->value = *(int *)opt->value + 1;
+        }
+        if (*(int *)opt->value < 0) { 
+            *(int *)opt->value = 0;
+        }
         break;
     case ARGPARSE_OPT_BIT:
         if (flags & OPT_UNSET) {
@@ -127,8 +134,12 @@ argparse_long_opt(struct argparse *this, const struct argparse_option *options)
 
         rest = prefix_skip(this->argv[0] + 2, options->long_name);
         if (!rest) {
-            // Negation alloed?
+            // Negation allowed?
             if (options->flags & OPT_NONEG) {
+                continue;
+            }
+            // Only boolean/bit allow negation.
+            if (options->type != ARGPARSE_OPT_BOOLEAN && options->type != ARGPARSE_OPT_BIT) {
                 continue;
             }
 

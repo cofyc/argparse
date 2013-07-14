@@ -251,8 +251,8 @@ argparse_usage(struct argparse *this)
     const struct argparse_option *options;
 
     // figure out best width
-    int usage_opts_width = 0;
-    int len;
+    size_t usage_opts_width = 0;
+    size_t len;
     options = this->options;
     for (; options->type != ARGPARSE_OPT_END; options++) {
         len = 0;
@@ -309,6 +309,7 @@ argparse_usage(struct argparse *this)
 int
 argparse_help_cb(struct argparse *this, const struct argparse_option *option)
 {
+    (void)option;
     argparse_usage(this);
     exit(0);
     return 0;

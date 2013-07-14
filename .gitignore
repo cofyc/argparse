@@ -1,3 +1,4 @@
 tags
 test_argparse
-*.o
+*.[ao]
+*.dylib

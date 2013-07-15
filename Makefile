@@ -1,5 +1,5 @@
 # Defaults
-BASIC_CFLAGS = -Wall -W -Wstrict-prototypes -Wwrite-strings -O3 -g -ggdb
+BASIC_CFLAGS = -Wall -O3 -g -ggdb
 BASIC_LDFLAGS = -lm
 
 # We use ALL_* variants

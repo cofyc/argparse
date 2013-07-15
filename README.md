@@ -3,6 +3,8 @@ NAME
 
 argparse - A command line arguments parsing library.
 
+[![Build Status](https://travis-ci.org/Cofyc/argparse.png)](https://travis-ci.org/Cofyc/argparse)
+
 DESCRIPTION
 ===========
 

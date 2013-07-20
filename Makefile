@@ -1,5 +1,5 @@
 # Defaults
-BASIC_CFLAGS = -Wall -O3 -g -ggdb
+BASIC_CFLAGS = -Wall -O3 -g -ggdb -fPIC
 BASIC_LDFLAGS = -lm
 
 # We use ALL_* variants

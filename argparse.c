@@ -36,7 +36,7 @@ static int
 argparse_getvalue(struct argparse *this, const struct argparse_option *opt,
                   int flags)
 {
-    const char *s;
+    const char *s = NULL;
     if (!opt->value)
         goto skipped;
     switch (opt->type) {

@@ -25,10 +25,10 @@ argparse_error(struct argparse *this, const struct argparse_option *opt,
 {
     if (!strncmp(this->argv[0], "--", 2)) {
         fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
-        exit(-1);
+        exit(1);
     } else {
         fprintf(stderr, "error: option `%c` %s\n", opt->short_name, reason);
-        exit(-1);
+        exit(1);
     }
 }
 
@@ -229,7 +229,7 @@ argparse_parse(struct argparse *this, int argc, const char **argv)
 unknown:
         fprintf(stderr, "error: unknown option `%s`\n", this->argv[0]);
         argparse_usage(this);
-        exit(0);
+        exit(1);
     }
 
 end:

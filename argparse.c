@@ -78,7 +78,7 @@ argparse_getvalue(struct argparse *this, const struct argparse_option *opt,
         } else {
             argparse_error(this, opt, "requires a value");
         }
-        if (*s)
+        if (s[0] != '\0')
             argparse_error(this, opt, "expects a numerical value");
         break;
     default:

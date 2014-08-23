@@ -103,6 +103,7 @@ argparse_options_check(const struct argparse_option *options)
         case ARGPARSE_OPT_BIT:
         case ARGPARSE_OPT_INTEGER:
         case ARGPARSE_OPT_STRING:
+        case ARGPARSE_OPT_GROUP:
             continue;
         default:
             fprintf(stderr, "wrong option type: %d", options->type);
@@ -279,8 +280,14 @@ argparse_usage(struct argparse *this)
 
     options = this->options;
     for (; options->type != ARGPARSE_OPT_END; options++) {
-        size_t pos;
-        int pad;
+        size_t pos = 0;
+        int pad = 0;
+        if (options->type == ARGPARSE_OPT_GROUP) {
+            fputc('\n', stdout);
+            pos += fprintf(stdout, "%s", options->help);
+            fputc('\n', stdout);
+            continue;
+        }
         pos = fprintf(stdout, "    ");
         if (options->short_name) {
             pos += fprintf(stdout, "-%c", options->short_name);

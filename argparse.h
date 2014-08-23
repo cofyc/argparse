@@ -41,6 +41,7 @@ enum argparse_flag {
 enum argparse_option_type {
     /* special */
     ARGPARSE_OPT_END,
+    ARGPARSE_OPT_GROUP,
     /* options with no arguments */
     ARGPARSE_OPT_BOOLEAN,
     ARGPARSE_OPT_BIT,
@@ -120,6 +121,7 @@ int argparse_help_cb(struct argparse *this,
 #define OPT_BIT(...)       { ARGPARSE_OPT_BIT, __VA_ARGS__ }
 #define OPT_INTEGER(...)   { ARGPARSE_OPT_INTEGER, __VA_ARGS__ }
 #define OPT_STRING(...)    { ARGPARSE_OPT_STRING, __VA_ARGS__ }
+#define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL }
 #define OPT_HELP()         OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 int argparse_init(struct argparse *this, struct argparse_option *options,

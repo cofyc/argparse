@@ -33,10 +33,14 @@ is "$(./test_argparse -h)" 'Usage: test_argparse [options] [[--] args]
    or: test_argparse [options]
 
     -h, --help        show this help message and exit
+
+OPTIONS
     -f, --force       force to do
     -t, --test        test only
     -p, --path=<str>  path to read
     -n, --num=<int>   selected num
+
+BITS
     --read            read perm
     --write           write perm
     --exec            exec perm'

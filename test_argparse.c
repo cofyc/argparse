@@ -2,6 +2,7 @@
 
 static const char *const usage[] = {
     "test_argparse [options] [[--] args]",
+    "test_argparse [options]",
     NULL,
 };
 

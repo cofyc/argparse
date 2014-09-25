@@ -28,3 +28,15 @@ is "$(./test_argparse -tf 2>&1)" 'force: 1
 test: 1'
 
 is "$(./test_argparse --read --write 2>&1)" 'perms: 3'
+
+is "$(./test_argparse -h)" 'Usage: test_argparse [options] [[--] args]
+   or: test_argparse [options]
+
+    -h, --help        show this help message and exit
+    -f, --force       force to do
+    -t, --test        test only
+    -p, --path=<str>  path to read
+    -n, --num=<int>   selected num
+    --read            read perm
+    --write           write perm
+    --exec            exec perm'

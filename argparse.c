@@ -245,7 +245,7 @@ argparse_usage(struct argparse *this)
 {
     fprintf(stdout, "Usage: %s\n", *this->usage++);
     while (*this->usage && **this->usage)
-        fprintf(stdout, "    or: %s\n", *this->usage++);
+        fprintf(stdout, "   or: %s\n", *this->usage++);
     fputc('\n', stdout);
 
     const struct argparse_option *options;

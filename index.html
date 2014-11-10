@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Argparse by Cofyc</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Argparse</h1>
+        <p>Command-line arguments parsing library.</p>
+
+        <p class="view"><a href="https://github.com/Cofyc/argparse">View the Project on GitHub <small>Cofyc/argparse</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/Cofyc/argparse/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Cofyc/argparse/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Cofyc/argparse">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="name" class="anchor" href="#name" aria-hidden="true"><span class="octicon octicon-link"></span></a>NAME</h1>
+
+<p>argparse - A command line arguments parsing library.</p>
+
+<p><a href="https://travis-ci.org/Cofyc/argparse"><img src="https://travis-ci.org/Cofyc/argparse.png" alt="Build Status"></a></p>
+
+<h1>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>DESCRIPTION</h1>
+
+<p>This module is inspired by parse-options.c (git) and python's argparse
+module.</p>
+
+<p>Arguments parsing is common task in cli program, but traditional <code>getopt</code>
+libraries are not easy to use. This library provides high-level arguments
+parsing solutions.</p>
+
+<p>The program defines what arguments it requires, and <code>argparse</code> will figure
+out how to parse those out of <code>argc</code> and <code>argv</code>, it also automatically
+generates help and usage messages and issues errors when users give the
+program invalid arguments.</p>
+
+<h1>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>handles both optional and positional arguments</li>
+<li>produces highly informative usage messages</li>
+<li>issures errors when given invalid arguments</li>
+</ul>
+
+<p>There are basically three types of options:</p>
+
+<ul>
+<li>boolean options</li>
+<li>options with mandatory argument</li>
+<li>options with optional argument</li>
+</ul>
+
+<p>There are basically two forms of options:</p>
+
+<ul>
+<li>short option consist of one dash (<code>-</code>) and one alphanumeric character.</li>
+<li>long option begin with two dashes (<code>--</code>) and some alphanumeric characters.</li>
+</ul>
+
+<p>Short options may be bundled, e.g. <code>-a -b</code> can be specified as <code>-ab</code>.</p>
+
+<p>Options are case-sensitive.</p>
+
+<p>Options and non-option arguments can clearly be separated using the <code>--</code> option.</p>
+
+<h1>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h1>
+
+<div class="highlight highlight-c"><pre>#<span class="k">include</span> <span class="s2">"argparse.h"</span>
+
+<span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> *<span class="k">const</span> usage[] = {
+   <span class="s2">"test_argparse [options] [[--] args]"</span>,
+   <span class="kc">NULL</span>,
+};
+
+<span class="kt">int</span>
+<span class="nf">main</span>(<span class="kt">int</span> argc, <span class="k">const</span> <span class="kt">char</span> **argv)
+{
+   <span class="kt">int</span> force = <span class="m">0</span>;
+   <span class="kt">int</span> num = <span class="m">0</span>;
+   <span class="k">const</span> <span class="kt">char</span> *path = <span class="kc">NULL</span>;
+   <span class="kt">struct</span> argparse_option options[] = {
+       <span class="nf">OPT_HELP</span>(),
+       <span class="nf">OPT_BOOLEAN</span>(<span class="s1">'f'</span>, <span class="s2">"force"</span>, &amp;force, <span class="s2">"force to do"</span>, <span class="kc">NULL</span>),
+       <span class="nf">OPT_STRING</span>(<span class="s1">'p'</span>, <span class="s2">"path"</span>, &amp;path, <span class="s2">"path to read"</span>, <span class="kc">NULL</span>),
+       <span class="nf">OPT_INTEGER</span>(<span class="s1">'n'</span>, <span class="s2">"num"</span>, &amp;num, <span class="s2">"selected num"</span>, <span class="kc">NULL</span>),
+       <span class="nf">OPT_END</span>(),
+   };
+   <span class="kt">struct</span> argparse argparse;
+   <span class="nf">argparse_init</span>(&amp;argparse, options, usage, <span class="m">0</span>);
+   argc = <span class="nf">argparse_parse</span>(&amp;argparse, argc, argv);
+   <span class="k">if</span> (force != <span class="m">0</span>)
+       <span class="nf">printf</span>(<span class="s2">"force: <span class="no">%d</span><span class="sc">\n</span>"</span>, force);
+   <span class="k">if</span> (path != <span class="kc">NULL</span>)
+       <span class="nf">printf</span>(<span class="s2">"path: <span class="no">%s</span><span class="sc">\n</span>"</span>, path);
+   <span class="k">if</span> (num != <span class="m">0</span>)
+       <span class="nf">printf</span>(<span class="s2">"num: <span class="no">%d</span><span class="sc">\n</span>"</span>, num);
+   <span class="k">if</span> (argc != <span class="m">0</span>) {
+       <span class="nf">printf</span>(<span class="s2">"argc: <span class="no">%d</span><span class="sc">\n</span>"</span>, argc);
+       <span class="kt">int</span> i;
+       <span class="k">for</span> (i = <span class="m">0</span>; i &lt; argc; i++) {
+           <span class="nf">printf</span>(<span class="s2">"argv[<span class="no">%d</span>]: <span class="no">%s</span><span class="sc">\n</span>"</span>, i, *(argv + i));
+       }
+   }
+   <span class="k">return</span> <span class="m">0</span>;
+}</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Cofyc">Cofyc</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>

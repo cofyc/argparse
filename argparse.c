@@ -284,7 +284,7 @@ argparse_usage(struct argparse *this)
         int pad = 0;
         if (options->type == ARGPARSE_OPT_GROUP) {
             fputc('\n', stdout);
-            pos += fprintf(stdout, "%s", options->help);
+            fprintf(stdout, "%s", options->help);
             fputc('\n', stdout);
             continue;
         }

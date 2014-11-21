@@ -114,6 +114,8 @@ struct argparse {
     const char **out;
     int cpidx;
     const char *optvalue;       // current option value
+    const char *description;    // a description after usage()
+    const char *epilog;         // a description at the end
 };
 
 // builtin callbacks
@@ -132,6 +134,8 @@ int argparse_help_cb(struct argparse *self,
 int argparse_init(struct argparse *self, struct argparse_option *options,
                   const char *const *usage, int flags);
 int argparse_parse(struct argparse *self, int argc, const char **argv);
+int argparse_describe(struct argparse *self, const char *description,
+                      const char *epilog);
 void argparse_usage(struct argparse *self);
 
 #ifdef __cplusplus

@@ -171,6 +171,8 @@ argparse_init(struct argparse *self, struct argparse_option *options,
     self->options = options;
     self->usage = usage;
     self->flags = flags;
+    self->description = 0;
+    self->epilog = 0;
     return 0;
 }
 
@@ -247,6 +249,11 @@ argparse_usage(struct argparse *self)
     fprintf(stdout, "Usage: %s\n", *self->usage++);
     while (*self->usage && **self->usage)
         fprintf(stdout, "   or: %s\n", *self->usage++);
+
+    // print description
+    if (self->description)
+        fprintf(stdout, "%s\n", self->description);
+
     fputc('\n', stdout);
 
     const struct argparse_option *options;
@@ -311,6 +318,17 @@ argparse_usage(struct argparse *self)
         }
         fprintf(stdout, "%*s%s\n", pad + 2, "", options->help);
     }
+
+    // print epilog
+    if (self->epilog)
+        fprintf(stdout, "\n%s\n", self->epilog);
+}
+
+int
+argparse_describe(struct argparse *self, const char *description, const char *epilog) {
+    self->description = description;
+    self->epilog = epilog;
+    return 1;
 }
 
 int

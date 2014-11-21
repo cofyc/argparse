@@ -21,6 +21,11 @@
  * Author: Yecheng Fu <cofyc.jackson@gmail.com>
  */
 
+/* For c++ compatiblilty */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
@@ -31,7 +36,7 @@
 struct argparse;
 struct argparse_option;
 
-typedef int argparse_callback(struct argparse *this,
+typedef int argparse_callback(struct argparse *this_argparse,
                               const struct argparse_option *option);
 
 enum argparse_flag {
@@ -112,21 +117,24 @@ struct argparse {
 };
 
 // builtin callbacks
-int argparse_help_cb(struct argparse *this,
+int argparse_help_cb(struct argparse *this_argparse,
                      const struct argparse_option *option);
 
 // builtin option macros
-#define OPT_END()          { ARGPARSE_OPT_END }
+#define OPT_END()          { ARGPARSE_OPT_END , 0, NULL, NULL, 0, NULL }
 #define OPT_BOOLEAN(...)   { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ }
 #define OPT_BIT(...)       { ARGPARSE_OPT_BIT, __VA_ARGS__ }
 #define OPT_INTEGER(...)   { ARGPARSE_OPT_INTEGER, __VA_ARGS__ }
 #define OPT_STRING(...)    { ARGPARSE_OPT_STRING, __VA_ARGS__ }
-#define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL }
-#define OPT_HELP()         OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
+#define OPT_GROUP(h)       { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL }
+#define OPT_HELP()         OPT_BOOLEAN('h', "help", NULL, "show this_argparse help message and exit", argparse_help_cb)
 
-int argparse_init(struct argparse *this, struct argparse_option *options,
+int argparse_init(struct argparse *this_argparse, struct argparse_option *options,
                   const char *const *usage, int flags);
-int argparse_parse(struct argparse *this, int argc, const char **argv);
-void argparse_usage(struct argparse *this);
+int argparse_parse(struct argparse *this_argparse, int argc, const char **argv);
+void argparse_usage(struct argparse *this_argparse);
 
+#ifdef __cplusplus
+}
+#endif
 #endif

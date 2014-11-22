@@ -171,9 +171,16 @@ argparse_init(struct argparse *self, struct argparse_option *options,
     self->options = options;
     self->usage = usage;
     self->flags = flags;
-    self->description = 0;
-    self->epilog = 0;
+    self->description = NULL;
+    self->epilog = NULL;
     return 0;
+}
+
+void
+argparse_describe(struct argparse *self, const char *description, const char *epilog)
+{
+    self->description = description;
+    self->epilog = epilog;
 }
 
 int
@@ -321,14 +328,7 @@ argparse_usage(struct argparse *self)
 
     // print epilog
     if (self->epilog)
-        fprintf(stdout, "\n%s\n", self->epilog);
-}
-
-int
-argparse_describe(struct argparse *self, const char *description, const char *epilog) {
-    self->description = description;
-    self->epilog = epilog;
-    return 1;
+        fprintf(stdout, "%s\n", self->epilog);
 }
 
 int

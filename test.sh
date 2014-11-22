@@ -32,15 +32,19 @@ is "$(./test_argparse --read --write 2>&1)" 'perms: 3'
 is "$(./test_argparse -h)" 'Usage: test_argparse [options] [[--] args]
    or: test_argparse [options]
 
+A brief description of what the program does and how it works.
+
     -h, --help        show this help message and exit
 
-OPTIONS
+Basic options
     -f, --force       force to do
     -t, --test        test only
     -p, --path=<str>  path to read
     -n, --num=<int>   selected num
 
-BITS
+Bits options
     --read            read perm
     --write           write perm
-    --exec            exec perm'
+    --exec            exec perm
+
+Additional description of the program after the description of the arguments.'

@@ -1,7 +1,7 @@
 NAME
 ====
 
-argparse - A command line arguments parsing library.
+argparse - A command line arguments parsing library in C (compatible with C++).
 
 [![Build Status](https://travis-ci.org/Cofyc/argparse.png)](https://travis-ci.org/Cofyc/argparse)
 
@@ -25,7 +25,7 @@ Features
 
  - handles both optional and positional arguments
  - produces highly informative usage messages
- - issures errors when given invalid arguments
+ - issues errors when given invalid arguments
 
 There are basically three types of options:
 

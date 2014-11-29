@@ -18,10 +18,11 @@
  * Reserved namespaces:
  *  argparse
  *  OPT
+ *
  * Author: Yecheng Fu <cofyc.jackson@gmail.com>
  */
 
-/* For c++ compatiblilty */
+/* For c++ compatibility */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,11 +57,11 @@ enum argparse_option_type {
 };
 
 enum argparse_option_flags {
-    OPT_NONEG = 1,              /* Negation disabled. */
+    OPT_NONEG = 1,              /* disable negation */
 };
 
-/*
- *  Argparse option struct.
+/**
+ *  argparse option
  *
  *  `type`:
  *    holds the type of the option, you must have an ARGPARSE_OPT_END last in your
@@ -87,7 +88,6 @@ enum argparse_option_flags {
  *
  *  `flags`:
  *    option flags.
- *
  */
 struct argparse_option {
     enum argparse_option_type type;
@@ -100,7 +100,7 @@ struct argparse_option {
     int flags;
 };
 
-/*
+/**
  * argpparse
  */
 struct argparse {
@@ -118,11 +118,11 @@ struct argparse {
     const char *optvalue;       // current option value
 };
 
-// builtin callbacks
+// built-in callbacks
 int argparse_help_cb(struct argparse *self,
                      const struct argparse_option *option);
 
-// builtin option macros
+// built-in option macros
 #define OPT_END()          { ARGPARSE_OPT_END , 0, NULL, NULL, 0, NULL }
 #define OPT_BOOLEAN(...)   { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ }
 #define OPT_BIT(...)       { ARGPARSE_OPT_BIT, __VA_ARGS__ }
@@ -141,4 +141,5 @@ void argparse_usage(struct argparse *self);
 #ifdef __cplusplus
 }
 #endif
+
 #endif

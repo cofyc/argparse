@@ -135,23 +135,22 @@ argparse_long_opt(struct argparse *self, const struct argparse_option *options)
 
         rest = prefix_skip(self->argv[0] + 2, options->long_name);
         if (!rest) {
-            // Negation allowed?
+            // negation disabled?
             if (options->flags & OPT_NONEG) {
                 continue;
             }
-            // Only boolean/bit allow negation.
+            // only OPT_BOOLEAN/OPT_BIT supports negation
             if (options->type != ARGPARSE_OPT_BOOLEAN && options->type != ARGPARSE_OPT_BIT) {
                 continue;
             }
 
-            if (!prefix_cmp(self->argv[0] + 2, "no-")) {
-                rest = prefix_skip(self->argv[0] + 2 + 3, options->long_name);
-                if (!rest)
-                    continue;
-                opt_flags |= OPT_UNSET;
-            } else {
+            if (prefix_cmp(self->argv[0] + 2, "no-")) {
                 continue;
             }
+            rest = prefix_skip(self->argv[0] + 2 + 3, options->long_name);
+            if (!rest)
+                continue;
+            opt_flags |= OPT_UNSET;
         }
         if (*rest) {
             if (*rest != '=')
@@ -198,7 +197,7 @@ argparse_parse(struct argparse *self, int argc, const char **argv)
             if (self->flags & ARGPARSE_STOP_AT_NON_OPTION) {
                 goto end;
             }
-            // if it's not option or is a single char '-', copy verbatimly
+            // if it's not option or is a single char '-', copy verbatim
             self->out[self->cpidx++] = self->argv[0];
             continue;
         }

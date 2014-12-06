@@ -1,6 +1,6 @@
 #include "argparse.h"
 
-static const char *const usage[] = {
+static const char *const usages[] = {
     "test_argparse [options] [[--] args]",
     "test_argparse [options]",
     NULL,
@@ -33,7 +33,7 @@ main(int argc, const char **argv)
     };
 
     struct argparse argparse;
-    argparse_init(&argparse, options, usage, 0);
+    argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nA brief description of what the program does and how it works.", "\nAdditional description of the program after the description of the arguments.");
     argc = argparse_parse(&argparse, argc, argv);
     if (force != 0)

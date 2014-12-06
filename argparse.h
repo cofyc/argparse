@@ -106,7 +106,7 @@ struct argparse_option {
 struct argparse {
     // user supplied
     const struct argparse_option *options;
-    const char *const *usage;
+    const char *const *usages;
     int flags;
     const char *description;    // a description after usage
     const char *epilog;         // a description at the end
@@ -132,7 +132,7 @@ int argparse_help_cb(struct argparse *self,
 #define OPT_HELP()         OPT_BOOLEAN('h', "help", NULL, "show this help message and exit", argparse_help_cb)
 
 int argparse_init(struct argparse *self, struct argparse_option *options,
-                  const char *const *usage, int flags);
+                  const char *const *usages, int flags);
 void argparse_describe(struct argparse *self, const char *description,
                       const char *epilog);
 int argparse_parse(struct argparse *self, int argc, const char **argv);

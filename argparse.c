@@ -164,11 +164,11 @@ argparse_long_opt(struct argparse *self, const struct argparse_option *options)
 
 int
 argparse_init(struct argparse *self, struct argparse_option *options,
-              const char *const *usage, int flags)
+              const char *const *usages, int flags)
 {
     memset(self, 0, sizeof(*self));
     self->options = options;
-    self->usage = usage;
+    self->usages = usages;
     self->flags = flags;
     self->description = NULL;
     self->epilog = NULL;
@@ -252,9 +252,9 @@ end:
 void
 argparse_usage(struct argparse *self)
 {
-    fprintf(stdout, "Usage: %s\n", *self->usage++);
-    while (*self->usage && **self->usage)
-        fprintf(stdout, "   or: %s\n", *self->usage++);
+    fprintf(stdout, "Usage: %s\n", *self->usages++);
+    while (*self->usages && **self->usages)
+        fprintf(stdout, "   or: %s\n", *self->usages++);
 
     // print description
     if (self->description)

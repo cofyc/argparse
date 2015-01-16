@@ -23,13 +23,12 @@ static void
 argparse_error(struct argparse *self, const struct argparse_option *opt,
                const char *reason)
 {
-    if (!strncmp(self->argv[0], "--", 2)) {
-        fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
-        exit(1);
+    if (opt->long_name) {
+        fprintf(stderr, "error: option `--%s` %s\n", opt->long_name, reason);
     } else {
-        fprintf(stderr, "error: option `%c` %s\n", opt->short_name, reason);
-        exit(1);
+        fprintf(stderr, "error: option `-%c` %s\n", opt->short_name, reason);
     }
+    exit(1);
 }
 
 static int

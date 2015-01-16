@@ -1,6 +1,7 @@
 #include "argparse.h"
 
 #define OPT_UNSET 1
+#define OPT_LONG  1 << 1
 
 static const char *
 prefix_skip(const char *str, const char *prefix)
@@ -9,7 +10,7 @@ prefix_skip(const char *str, const char *prefix)
     return strncmp(str, prefix, len) ? NULL : str + len;
 }
 
-int
+static int
 prefix_cmp(const char *str, const char *prefix)
 {
     for (;; str++, prefix++)
@@ -21,9 +22,9 @@ prefix_cmp(const char *str, const char *prefix)
 
 static void
 argparse_error(struct argparse *self, const struct argparse_option *opt,
-               const char *reason)
+               const char *reason, int flags)
 {
-    if (opt->long_name) {
+    if (flags & OPT_LONG) {
         fprintf(stderr, "error: option `--%s` %s\n", opt->long_name, reason);
     } else {
         fprintf(stderr, "error: option `-%c` %s\n", opt->short_name, reason);
@@ -45,7 +46,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             *(int *)opt->value = *(int *)opt->value + 1;
         }
-        if (*(int *)opt->value < 0) { 
+        if (*(int *)opt->value < 0) {
             *(int *)opt->value = 0;
         }
         break;
@@ -64,7 +65,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
             self->argc--;
             *(const char **)opt->value = *++self->argv;
         } else {
-            argparse_error(self, opt, "requires a value");
+            argparse_error(self, opt, "requires a value", flags);
         }
         break;
     case ARGPARSE_OPT_INTEGER:
@@ -75,10 +76,10 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
             self->argc--;
             *(int *)opt->value = strtol(*++self->argv, (char **)&s, 0);
         } else {
-            argparse_error(self, opt, "requires a value");
+            argparse_error(self, opt, "requires a value", flags);
         }
         if (s[0] != '\0')
-            argparse_error(self, opt, "expects a numerical value");
+            argparse_error(self, opt, "expects a numerical value", flags);
         break;
     default:
         assert(0);
@@ -139,7 +140,8 @@ argparse_long_opt(struct argparse *self, const struct argparse_option *options)
                 continue;
             }
             // only OPT_BOOLEAN/OPT_BIT supports negation
-            if (options->type != ARGPARSE_OPT_BOOLEAN && options->type != ARGPARSE_OPT_BIT) {
+            if (options->type != ARGPARSE_OPT_BOOLEAN && options->type !=
+                ARGPARSE_OPT_BIT) {
                 continue;
             }
 
@@ -156,7 +158,7 @@ argparse_long_opt(struct argparse *self, const struct argparse_option *options)
                 continue;
             self->optvalue = rest + 1;
         }
-        return argparse_getvalue(self, options, opt_flags);
+        return argparse_getvalue(self, options, opt_flags | OPT_LONG);
     }
     return -2;
 }
@@ -175,7 +177,8 @@ argparse_init(struct argparse *self, struct argparse_option *options,
 }
 
 void
-argparse_describe(struct argparse *self, const char *description, const char *epilog)
+argparse_describe(struct argparse *self, const char *description,
+                  const char *epilog)
 {
     self->description = description;
     self->epilog = epilog;

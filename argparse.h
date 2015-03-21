@@ -1,26 +1,12 @@
+/**
+ * Copyright (C) 2012-2015 Yecheng Fu <cofyc.jackson at gmail dot com>
+ * All rights reserved.
+ *
+ * Use of this source code is governed by a MIT-style license that can be found
+ * in the LICENSE file.
+ */
 #ifndef ARGPARSE_H
 #define ARGPARSE_H
-/**
- * Command-line arguments parsing library.
- *
- * This module is inspired by parse-options.c (git) and python's argparse
- * module.
- *
- * Arguments parsing is common task in cli program, but traditional `getopt`
- * libraries are not easy to use. This library provides high-level arguments
- * parsing solutions.
- *
- * The program defines what arguments it requires, and `argparse` will figure
- * out how to parse those out of `argc` and `argv`, it also automatically
- * generates help and usage messages and issues errors when users give the
- * program invalid arguments.
- *
- * Reserved namespaces:
- *  argparse
- *  OPT
- *
- * Author: Yecheng Fu <cofyc.jackson@gmail.com>
- */
 
 /* For c++ compatibility */
 #ifdef __cplusplus

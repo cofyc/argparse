@@ -1,10 +1,13 @@
 # Defaults
-BASIC_CFLAGS = -Wall -O3 -g -ggdb -fPIC
+CFLAGS ?= -O3 -g -ggdb
+LDFLAGS ?=
+
+BASIC_CFLAGS = -Wall -fPIC
 BASIC_LDFLAGS = -lm
 
 # We use ALL_* variants
-ALL_CFLAGS = $(CFLAGS) $(BASIC_CFLAGS)
-ALL_LDFLAGS = $(LDFLAGS) $(BASIC_LDFLAGS)
+ALL_CFLAGS = $(BASIC_CFLAGS) $(CFLAGS)
+ALL_LDFLAGS = $(BASIC_LDFLAGS) $(LDFLAGS)
 
 LIBNAME=libargparse
 

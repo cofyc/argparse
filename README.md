@@ -3,7 +3,7 @@ NAME
 
 argparse - A command line arguments parsing library in C (compatible with C++).
 
-[![Build Status](https://travis-ci.org/Cofyc/argparse.png)](https://travis-ci.org/Cofyc/argparse)
+[![Build Status](https://travis-ci.org/cofyc/argparse.png)](https://travis-ci.org/cofyc/argparse)
 
 DESCRIPTION
 ===========

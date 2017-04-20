@@ -21,10 +21,11 @@ static int
 prefix_cmp(const char *str, const char *prefix)
 {
     for (;; str++, prefix++)
-        if (!*prefix)
+        if (!*prefix) {
             return 0;
-        else if (*str != *prefix)
+        } else if (*str != *prefix) {
             return (unsigned char)*prefix - (unsigned char)*str;
+        }
 }
 
 static void
@@ -68,7 +69,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
     case ARGPARSE_OPT_STRING:
         if (self->optvalue) {
             *(const char **)opt->value = self->optvalue;
-            self->optvalue = NULL;
+            self->optvalue             = NULL;
         } else if (self->argc > 1) {
             self->argc--;
             *(const char **)opt->value = *++self->argv;
@@ -79,7 +80,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
     case ARGPARSE_OPT_INTEGER:
         if (self->optvalue) {
             *(int *)opt->value = strtol(self->optvalue, (char **)&s, 0);
-            self->optvalue = NULL;
+            self->optvalue     = NULL;
         } else if (self->argc > 1) {
             self->argc--;
             *(int *)opt->value = strtol(*++self->argv, (char **)&s, 0);
@@ -176,11 +177,11 @@ argparse_init(struct argparse *self, struct argparse_option *options,
               const char *const *usages, int flags)
 {
     memset(self, 0, sizeof(*self));
-    self->options = options;
-    self->usages = usages;
-    self->flags = flags;
+    self->options     = options;
+    self->usages      = usages;
+    self->flags       = flags;
     self->description = NULL;
-    self->epilog = NULL;
+    self->epilog      = NULL;
     return 0;
 }
 
@@ -189,7 +190,7 @@ argparse_describe(struct argparse *self, const char *description,
                   const char *epilog)
 {
     self->description = description;
-    self->epilog = epilog;
+    self->epilog      = epilog;
 }
 
 int
@@ -197,7 +198,7 @@ argparse_parse(struct argparse *self, int argc, const char **argv)
 {
     self->argc = argc - 1;
     self->argv = argv + 1;
-    self->out = argv;
+    self->out  = argv;
 
     argparse_options_check(self->options);
 
@@ -266,8 +267,7 @@ argparse_usage(struct argparse *self)
         fprintf(stdout, "Usage: %s\n", *self->usages++);
         while (*self->usages && **self->usages)
             fprintf(stdout, "   or: %s\n", *self->usages++);
-    }
-    else {
+    } else {
         fprintf(stdout, "Usage:\n");
     }
 
@@ -309,7 +309,7 @@ argparse_usage(struct argparse *self)
     options = self->options;
     for (; options->type != ARGPARSE_OPT_END; options++) {
         size_t pos = 0;
-        int pad = 0;
+        int pad    = 0;
         if (options->type == ARGPARSE_OPT_GROUP) {
             fputc('\n', stdout);
             fprintf(stdout, "%s", options->help);
@@ -351,5 +351,4 @@ argparse_help_cb(struct argparse *self, const struct argparse_option *option)
     (void)option;
     argparse_usage(self);
     exit(0);
-    return 0;
 }

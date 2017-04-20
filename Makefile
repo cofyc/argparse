@@ -2,7 +2,7 @@
 CFLAGS ?= -O3 -g -ggdb
 LDFLAGS ?=
 
-BASIC_CFLAGS = -Wall -fPIC
+BASIC_CFLAGS = -Wall -Wextra -fPIC
 BASIC_LDFLAGS = -lm
 
 # We use ALL_* variants
@@ -21,8 +21,8 @@ STLIB_MAKE_CMD=ar rcs $(STLIBNAME)
 # Platform-specific overrides
 uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 ifeq ($(uname_S),Darwin)
-  DYLIBSUFFIX=dylib
-  DYLIB_MAKE_CMD=$(CC) -shared -o $(DYLIBNAME) $(ALL_LDFLAGS)
+DYLIBSUFFIX=dylib
+DYLIB_MAKE_CMD=$(CC) -shared -o $(DYLIBNAME) $(ALL_LDFLAGS)
 endif
 
 all: $(DYLIBNAME) $(STLIBNAME)

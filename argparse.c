@@ -31,6 +31,7 @@ static void
 argparse_error(struct argparse *self, const struct argparse_option *opt,
                const char *reason, int flags)
 {
+    (void)self;
     if (flags & OPT_LONG) {
         fprintf(stderr, "error: option `--%s` %s\n", opt->long_name, reason);
     } else {
@@ -261,9 +262,14 @@ end:
 void
 argparse_usage(struct argparse *self)
 {
-    fprintf(stdout, "Usage: %s\n", *self->usages++);
-    while (*self->usages && **self->usages)
-        fprintf(stdout, "   or: %s\n", *self->usages++);
+    if (self->usages) {
+        fprintf(stdout, "Usage: %s\n", *self->usages++);
+        while (*self->usages && **self->usages)
+            fprintf(stdout, "   or: %s\n", *self->usages++);
+    }
+    else {
+        fprintf(stdout, "Usage:\n");
+    }
 
     // print description
     if (self->description)

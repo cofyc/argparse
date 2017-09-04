@@ -1,12 +1,10 @@
-NAME
-====
+# Name
 
 argparse - A command line arguments parsing library in C (compatible with C++).
 
 [![Build Status](https://travis-ci.org/cofyc/argparse.png)](https://travis-ci.org/cofyc/argparse)
 
-DESCRIPTION
-===========
+## Description
 
 This module is inspired by parse-options.c (git) and python's argparse
 module.
@@ -20,8 +18,7 @@ out how to parse those out of `argc` and `argv`, it also automatically
 generates help and usage messages and issues errors when users give the
 program invalid arguments.
 
-Features
-========
+## Features
 
  - handles both optional and positional arguments
  - produces highly informative usage messages
@@ -44,8 +41,7 @@ Options are case-sensitive.
 
 Options and non-option arguments can clearly be separated using the `--` option.
 
-Examples
-========
+## Examples
 
 ```c
 #include "argparse.h"

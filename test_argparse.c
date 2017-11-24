@@ -16,6 +16,7 @@ main(int argc, const char **argv)
     int force = 0;
     int test = 0;
     int num = 0;
+    float flt_num = 0.f;
     const char *path = NULL;
     int perms = 0;
     struct argparse_option options[] = {
@@ -25,6 +26,7 @@ main(int argc, const char **argv)
         OPT_BOOLEAN('t', "test", &test, "test only"),
         OPT_STRING('p', "path", &path, "path to read"),
         OPT_INTEGER('n', "num", &num, "selected num"),
+        OPT_FLOAT('s', "float", &flt_num, "selected float"),
         OPT_GROUP("Bits options"),
         OPT_BIT(0, "read", &perms, "read perm", NULL, PERM_READ, OPT_NONEG),
         OPT_BIT(0, "write", &perms, "write perm", NULL, PERM_WRITE),
@@ -44,6 +46,8 @@ main(int argc, const char **argv)
         printf("path: %s\n", path);
     if (num != 0)
         printf("num: %d\n", num);
+    if (flt_num != 0)
+        printf("flt_num: %g\n", flt_num);
     if (argc != 0) {
         printf("argc: %d\n", argc);
         int i;

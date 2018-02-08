@@ -5,6 +5,7 @@
  * Use of this source code is governed by a MIT-style license that can be found
  * in the LICENSE file.
  */
+#include <errno.h>
 #include "argparse.h"
 
 #define OPT_UNSET 1
@@ -78,6 +79,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         }
         break;
     case ARGPARSE_OPT_INTEGER:
+        errno = 0; 
         if (self->optvalue) {
             *(int *)opt->value = strtol(self->optvalue, (char **)&s, 0);
             self->optvalue     = NULL;
@@ -87,10 +89,13 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
+        if (errno) 
+            argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects an integer value", flags);
         break;
     case ARGPARSE_OPT_FLOAT:
+        errno = 0; 
         if (self->optvalue) {
             *(float *)opt->value = strtof(self->optvalue, (char **)&s);
             self->optvalue     = NULL;
@@ -100,6 +105,8 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
+        if (errno) 
+            argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects a numerical value", flags);
         break;

@@ -18,11 +18,17 @@ is "$(./test_argparse -i2 2>&1)" 'int_num: 2'
 
 is "$(./test_argparse -ia 2>&1)" 'error: option `-i` expects an integer value'
 
+is "$(./test_argparse -i 0xFFFFFFFFFFFFFFFFF 2>&1)" \
+   'error: option `-i` Numerical result out of range'
+
 is "$(./test_argparse -s 2.4 2>&1)" 'flt_num: 2.4'
 
 is "$(./test_argparse -s2.4 2>&1)" 'flt_num: 2.4'
 
 is "$(./test_argparse -sa 2>&1)" 'error: option `-s` expects a numerical value'
+
+is "$(./test_argparse -s 1e999 2>&1)" \
+   'error: option `-s` Numerical result out of range'
 
 is "$(./test_argparse -f -- do -f -h 2>&1)" 'force: 1
 argc: 3

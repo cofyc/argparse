@@ -9,7 +9,7 @@
 #include "argparse.h"
 
 #define OPT_UNSET 1
-#define OPT_LONG  1 << 1
+#define OPT_LONG  (1 << 1)
 
 static const char *
 prefix_skip(const char *str, const char *prefix)
@@ -323,7 +323,7 @@ argparse_usage(struct argparse *self)
         } else if (options->type == ARGPARSE_OPT_STRING) {
             len += strlen("=<str>");
         }
-        len = ceil((float)len / 4) * 4;
+        len = (len + 3) - ((len + 3) & 3);
         if (usage_opts_width < len) {
             usage_opts_width = len;
         }

@@ -5,10 +5,15 @@
  * Use of this source code is governed by a MIT-style license that can be found
  * in the LICENSE file.
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include <errno.h>
 #include "argparse.h"
 
 #define OPT_UNSET 1
-#define OPT_LONG  1 << 1
+#define OPT_LONG  (1 << 1)
 
 static const char *
 prefix_skip(const char *str, const char *prefix)
@@ -78,6 +83,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         }
         break;
     case ARGPARSE_OPT_INTEGER:
+        errno = 0; 
         if (self->optvalue) {
             *(int *)opt->value = strtol(self->optvalue, (char **)&s, 0);
             self->optvalue     = NULL;
@@ -87,10 +93,13 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
+        if (errno) 
+            argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects an integer value", flags);
         break;
     case ARGPARSE_OPT_FLOAT:
+        errno = 0; 
         if (self->optvalue) {
             *(float *)opt->value = strtof(self->optvalue, (char **)&s);
             self->optvalue     = NULL;
@@ -100,6 +109,8 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
+        if (errno) 
+            argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects a numerical value", flags);
         break;
@@ -316,7 +327,7 @@ argparse_usage(struct argparse *self)
         } else if (options->type == ARGPARSE_OPT_STRING) {
             len += strlen("=<str>");
         }
-        len = ceil((float)len / 4) * 4;
+        len = (len + 3) - ((len + 3) & 3);
         if (usage_opts_width < len) {
             usage_opts_width = len;
         }

@@ -3,7 +3,7 @@ CFLAGS ?= -O3 -g -ggdb
 LDFLAGS ?=
 
 BASIC_CFLAGS = -Wall -Wextra -fPIC
-BASIC_LDFLAGS = -lm
+BASIC_LDFLAGS = 
 
 # We use ALL_* variants
 ALL_CFLAGS = $(BASIC_CFLAGS) $(CFLAGS)

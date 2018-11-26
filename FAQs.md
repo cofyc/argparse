@@ -26,3 +26,11 @@ Issues:
 
 - https://github.com/cofyc/argparse/issues/3
 - https://github.com/cofyc/argparse/issues/9
+
+## Why using `intptr_t` to hold associated data? Why not `void *`?
+
+I choose `intptr_t` because it's a integer type which also can be used to hold
+a pointer value.  Most of the time, we only need a integer to hold
+user-provided value, see `OPT_BIT` as example. If you want to provide a pointer
+which points a large amount of data, you can cast it to `intptr_t` and cast it
+back to original pointer in callback function.f

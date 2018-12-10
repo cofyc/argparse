@@ -41,7 +41,7 @@ test: 1'
 
 is "$(./test_argparse --read --write 2>&1)" 'perms: 3'
 
-is "$(./test_argparse -h)" 'Usage: test_argparse [options] [[--] args]
+help_usage='Usage: test_argparse [options] [[--] args]
    or: test_argparse [options]
 
 A brief description of what the program does and how it works.
@@ -61,3 +61,9 @@ Bits options
     --exec                exec perm
 
 Additional description of the program after the description of the arguments.'
+
+is "$(./test_argparse -h)" "$help_usage"
+
+is "$(./test_argparse --help)" "$help_usage"
+
+is "$(./test_argparse --no-help 2>&1)" 'error: unknown option `--no-help`'$'\n'"$help_usage"

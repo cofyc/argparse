@@ -83,7 +83,7 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         }
         break;
     case ARGPARSE_OPT_INTEGER:
-        errno = 0; 
+        errno = 0;
         if (self->optvalue) {
             *(int *)opt->value = strtol(self->optvalue, (char **)&s, 0);
             self->optvalue     = NULL;
@@ -93,23 +93,23 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
-        if (errno) 
+        if (errno)
             argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects an integer value", flags);
         break;
     case ARGPARSE_OPT_FLOAT:
-        errno = 0; 
+        errno = 0;
         if (self->optvalue) {
             *(float *)opt->value = strtof(self->optvalue, (char **)&s);
-            self->optvalue     = NULL;
+            self->optvalue       = NULL;
         } else if (self->argc > 1) {
             self->argc--;
             *(float *)opt->value = strtof(*++self->argv, (char **)&s);
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
-        if (errno) 
+        if (errno)
             argparse_error(self, opt, strerror(errno), flags);
         if (s[0] != '\0')
             argparse_error(self, opt, "expects a numerical value", flags);
@@ -321,7 +321,7 @@ argparse_usage(struct argparse *self)
         }
         if (options->type == ARGPARSE_OPT_INTEGER) {
             len += strlen("=<int>");
-		  }
+        }
         if (options->type == ARGPARSE_OPT_FLOAT) {
             len += strlen("=<flt>");
         } else if (options->type == ARGPARSE_OPT_STRING) {

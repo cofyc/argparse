@@ -30,7 +30,7 @@ all: $(DYLIBNAME) $(STLIBNAME)
 OBJS += argparse.o
 OBJS += test_argparse.o
 
-$(OBJS): %.o: %.c
+$(OBJS): %.o: %.c argparse.h
 	$(CC) -o $*.o -c $(ALL_CFLAGS) $<
 
 $(DYLIBNAME): argparse.o

@@ -99,7 +99,7 @@ struct argparse {
     const char **argv;
     const char **out;
     int cpidx;
-    int padding_b[4];
+    int padding_b;
     const char *optvalue;       // current option value
 };
 

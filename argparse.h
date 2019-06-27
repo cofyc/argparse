@@ -95,11 +95,11 @@ struct argparse {
     const char *epilog;         // a description at the end
     // internal context
     int argc;
-    int8_t padding_a[4];
+    int padding_a;
     const char **argv;
     const char **out;
     int cpidx;
-    int8_t padding_b[4];
+    int padding_b[4];
     const char *optvalue;       // current option value
 };
 
@@ -111,7 +111,7 @@ int argparse_help_cb(struct argparse *self,
 #define OPT_END()        { ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0, 0 }
 #define OPT_BOOLEAN(...) { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__, 0 }
 #define OPT_BIT(...)     { ARGPARSE_OPT_BIT, __VA_ARGS__, 0 }
-#define OPT_INTEGER(...) { ARGPARSE_OPT_INTEGER, __VA_ARGS__, 0}
+#define OPT_INTEGER(...) { ARGPARSE_OPT_INTEGER, __VA_ARGS__, 0 }
 #define OPT_FLOAT(...)   { ARGPARSE_OPT_FLOAT, __VA_ARGS__, 0 }
 #define OPT_STRING(...)  { ARGPARSE_OPT_STRING, __VA_ARGS__, 0 }
 #define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0, 0 }

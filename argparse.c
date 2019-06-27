@@ -284,7 +284,7 @@ unknown:
 
 end:
     memmove(self->out + self->cpidx, self->argv,
-            (unsigned) self->argc * sizeof(*self->out));
+            (size_t) self->argc * sizeof(*self->out));
     self->out[self->cpidx + self->argc] = NULL;
 
     return self->cpidx + self->argc;

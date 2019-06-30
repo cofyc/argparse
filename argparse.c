@@ -148,6 +148,8 @@ argparse_options_check(const struct argparse_option *options)
         case ARGPARSE_OPT_GROUP:
             continue;
         }
+	fprintf(stderr, "wrong option type: %d", options->type);
+	break;
     }
 }
 

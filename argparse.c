@@ -364,7 +364,7 @@ argparse_usage(struct argparse *self)
             else         { perror("fprintf"); assert(0); }
         }
         if (options->long_name) {
-            res = fprintf(stdout, "--%s", options->long_name);;
+            res = fprintf(stdout, "--%s", options->long_name);
             if (res > 0) { pos += (size_t) res; }
             else         { perror("fprintf"); assert(0); }
         }

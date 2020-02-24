@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 2.9)
 project(argparse C)
 
-if(NOT DEFINED CMAKE_C_FLAGS)
+if(NOT CMAKE_C_FLAGS)
 	set(CMAKE_C_FLAGS "-O3")
 endif()
-if(NOT DEFINED CMAKE_C_FLAGS_DEBUG)
-	if(UNIX)
-	set(CMAKE_C_FLAGS_DEBUG "-g")
-	else()
+if(NOT CMAKE_C_FLAGS_DEBUG)
 	set(CMAKE_C_FLAGS_DEBUG "-g -ggdb")
-	endif()
 endif()
 
 set(sources argparse.c)

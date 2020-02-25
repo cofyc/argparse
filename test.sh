@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. tap-functions
+. $(dirname ${BASH_SOURCE[0]})/tap-functions
 plan_no_plan
 
 is "$(./test_argparse -f --path=/path/to/file a 2>&1)" 'force: 1

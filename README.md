@@ -42,6 +42,7 @@ Options and non-option arguments can clearly be separated using the `--` option.
 ## Examples
 
 ```c
+#include <stdio.h>
 #include "argparse.h"
 
 static const char *const usage[] = {

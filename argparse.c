@@ -93,9 +93,9 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
-        if (errno)
-            argparse_error(self, opt, strerror(errno), flags);
-        if (s[0] != '\0')
+        if (errno == ERANGE)
+            argparse_error(self, opt, "numerical result out of range", flags);
+        if (s[0] != '\0') // no digits or contains invalid characters
             argparse_error(self, opt, "expects an integer value", flags);
         break;
     case ARGPARSE_OPT_FLOAT:
@@ -109,9 +109,9 @@ argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
         } else {
             argparse_error(self, opt, "requires a value", flags);
         }
-        if (errno)
-            argparse_error(self, opt, strerror(errno), flags);
-        if (s[0] != '\0')
+        if (errno == ERANGE)
+            argparse_error(self, opt, "numerical result out of range", flags);
+        if (s[0] != '\0') // no digits or contains invalid characters
             argparse_error(self, opt, "expects a numerical value", flags);
         break;
     default:

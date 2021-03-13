@@ -227,6 +227,11 @@ argparse_parse(struct argparse *self, int argc, const char **argv)
 
     argparse_options_check(self->options);
 
+    if(!self->argc) {
+        argparse_usage(self);
+        exit(EXIT_FAILURE);
+    }
+
     for (; self->argc; self->argc--, self->argv++) {
         const char *arg = self->argv[0];
         if (arg[0] != '-' || !arg[1]) {

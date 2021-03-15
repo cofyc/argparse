@@ -40,6 +40,7 @@ enum argparse_option_type {
 
 enum argparse_option_flags {
     OPT_NONEG = 1,              /* disable negation */
+    OPT_REQUIRED
 };
 
 /**
@@ -70,6 +71,9 @@ enum argparse_option_flags {
  *
  *  `flags`:
  *    option flags.
+ * 
+ *  *  `parsed`:
+ *    boolean to see if the option showed up in the argument list.
  */
 struct argparse_option {
     enum argparse_option_type type;
@@ -80,6 +84,7 @@ struct argparse_option {
     argparse_callback *callback;
     intptr_t data;
     int flags;
+    int parsed;
 };
 
 /**
@@ -87,7 +92,7 @@ struct argparse_option {
  */
 struct argparse {
     // user supplied
-    const struct argparse_option *options;
+    struct argparse_option *options;
     const char *const *usages;
     int flags;
     const char *description;    // a description after usage
@@ -105,13 +110,14 @@ int argparse_help_cb(struct argparse *self,
                      const struct argparse_option *option);
 
 // built-in option macros
-#define OPT_END()        { ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0 }
-#define OPT_BOOLEAN(...) { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__ }
-#define OPT_BIT(...)     { ARGPARSE_OPT_BIT, __VA_ARGS__ }
-#define OPT_INTEGER(...) { ARGPARSE_OPT_INTEGER, __VA_ARGS__ }
-#define OPT_FLOAT(...)   { ARGPARSE_OPT_FLOAT, __VA_ARGS__ }
-#define OPT_STRING(...)  { ARGPARSE_OPT_STRING, __VA_ARGS__ }
-#define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0 }
+// initially all parsed values for options are 0
+#define OPT_END()        { ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0, 0 }
+#define OPT_BOOLEAN(...) { ARGPARSE_OPT_BOOLEAN, __VA_ARGS__, 0 }
+#define OPT_BIT(...)     { ARGPARSE_OPT_BIT, __VA_ARGS__, 0 }
+#define OPT_INTEGER(...) { ARGPARSE_OPT_INTEGER, __VA_ARGS__, 0 }
+#define OPT_FLOAT(...)   { ARGPARSE_OPT_FLOAT, __VA_ARGS__, 0 }
+#define OPT_STRING(...)  { ARGPARSE_OPT_STRING, __VA_ARGS__, 0 }
+#define OPT_GROUP(h)     { ARGPARSE_OPT_GROUP, 0, NULL, NULL, h, NULL, 0, 0, 0 }
 #define OPT_HELP()       OPT_BOOLEAN('h', "help", NULL,                 \
                                      "show this help message and exit", \
                                      argparse_help_cb, 0, OPT_NONEG)

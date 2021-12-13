@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+        - gcc
+        - clang
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+    - name: Run with the compiler ${{ matrix.compiler }}
+      run: |
+        sudo apt-get install -y $compiler
+        CC=$compiler make test
+      env:
+        compiler: ${{ matrix.compiler }}

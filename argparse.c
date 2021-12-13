@@ -274,7 +274,9 @@ argparse_parse(struct argparse *self, int argc, const char **argv)
 unknown:
         fprintf(stderr, "error: unknown option `%s`\n", self->argv[0]);
         argparse_usage(self);
-        exit(EXIT_FAILURE);
+        if (!self->flags & ARGPARSE_IGNORE_UNKNOWN_ARGS) {
+            exit(EXIT_FAILURE);
+        }
     }
 
 end:

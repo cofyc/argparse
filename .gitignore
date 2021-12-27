@@ -4,3 +4,4 @@ test_argparse
 *.[ao]
 *.dylib
 *.so
+.vscode

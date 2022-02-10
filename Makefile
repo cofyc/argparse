@@ -29,7 +29,6 @@ endif
 all: $(DYLIBNAME) $(STLIBNAME)
 
 OBJS += argparse.o
-OBJS += test_argparse.o
 
 $(OBJS): %.o: %.c argparse.h
 	$(CROSS_COMPILE)gcc -o $*.o -c $(ALL_CFLAGS) $<
@@ -40,15 +39,11 @@ $(DYLIBNAME): argparse.o
 $(STLIBNAME): argparse.o
 	$(STLIB_MAKE_CMD) $^
 
-test: test_argparse
-	@echo "###### Unit Test #####"
-	@./test.sh
-
-test_argparse: $(OBJS)
-	$(CROSS_COMPILE)gcc $(ALL_CFLAGS) -o $@ $^ $(ALL_LDFLAGS)
+test: 
+	make -C tests/ test
 
 clean:
-	rm -rf test_argparse
 	rm -rf *.[ao]
 	rm -rf *.so
 	rm -rf *.dylib
+	make -C tests/ clean

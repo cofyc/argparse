@@ -26,16 +26,3 @@ endif()
 if(NOT (ARGPARSE_STATIC OR ARGPARSE_SHARED))
 	add_library(argparse OBJECT ${sources})
 endif()
-
-option(ENABLE_TESTS "Enable tests" OFF)
-if((ENABLE_TESTS OR CMAKE_TESTING_ENABLED) AND UNIX)
-	enable_testing()
-
-	add_executable(test_argparse test_argparse.c ${sources})
-	add_test(NAME argparse_test COMMAND ${CMAKE_SOURCE_DIR}/test.sh)
-	add_custom_command(
-		TARGET test_argparse
-		COMMENT "Running tests"
-		POST_BUILD WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-		COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
-endif()

@@ -4,8 +4,8 @@
 #include "argparse.h"
 
 static const char *const usages[] = {
-    "test_argparse [options] [[--] args]",
-    "test_argparse [options]",
+    "basic [options] [[--] args]",
+    "basic [options]",
     NULL,
 };
 

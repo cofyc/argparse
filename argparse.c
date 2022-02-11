@@ -378,17 +378,17 @@ argparse_usage(struct argparse *self)
 }
 
 int
-argparse_help_cb(struct argparse *self, const struct argparse_option *option)
-{
-    argparse_help_cb_no_exit(self, option);
-    exit(EXIT_SUCCESS);
-}
-
-int
 argparse_help_cb_no_exit(struct argparse *self,
                          const struct argparse_option *option)
 {
     (void)option;
     argparse_usage(self);
+}
+
+int
+argparse_help_cb(struct argparse *self, const struct argparse_option *option)
+{
+    argparse_help_cb_no_exit(self, option);
+    exit(EXIT_SUCCESS);
 }
 

@@ -126,7 +126,6 @@ void argparse_describe(struct argparse *self, const char *description,
 int argparse_parse(struct argparse *self, int argc, const char **argv);
 void argparse_usage(struct argparse *self);
 
-
 #ifdef __cplusplus
 }
 #endif

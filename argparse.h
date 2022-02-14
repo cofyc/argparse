@@ -104,6 +104,8 @@ struct argparse {
 // built-in callbacks
 int argparse_help_cb(struct argparse *self,
                      const struct argparse_option *option);
+int argparse_help_cb_no_exit(struct argparse *self,
+                             const struct argparse_option *option);
 
 // built-in option macros
 #define OPT_END()        { ARGPARSE_OPT_END, 0, NULL, NULL, 0, NULL, 0, 0 }

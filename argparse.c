@@ -122,7 +122,6 @@ skipped:
     if (opt->callback) {
         return opt->callback(self, opt);
     }
-
     return 0;
 }
 
@@ -131,17 +130,17 @@ argparse_options_check(const struct argparse_option *options)
 {
     for (; options->type != ARGPARSE_OPT_END; options++) {
         switch (options->type) {
-        case ARGPARSE_OPT_END:
-        case ARGPARSE_OPT_BOOLEAN:
-        case ARGPARSE_OPT_BIT:
-        case ARGPARSE_OPT_INTEGER:
-        case ARGPARSE_OPT_FLOAT:
-        case ARGPARSE_OPT_STRING:
-        case ARGPARSE_OPT_GROUP:
-            continue;
-        default:
-            fprintf(stderr, "wrong option type: %d", options->type);
-            break;
+            case ARGPARSE_OPT_END:
+            case ARGPARSE_OPT_BOOLEAN:
+            case ARGPARSE_OPT_BIT:
+            case ARGPARSE_OPT_INTEGER:
+            case ARGPARSE_OPT_FLOAT:
+            case ARGPARSE_OPT_STRING:
+            case ARGPARSE_OPT_GROUP:
+                continue;
+            default:
+                fprintf(stderr, "wrong option type: %d", options->type);
+                break;
         }
     }
 }
@@ -383,6 +382,7 @@ argparse_help_cb_no_exit(struct argparse *self,
 {
     (void)option;
     argparse_usage(self);
+    return (EXIT_SUCCESS);
 }
 
 int

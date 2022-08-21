@@ -22,6 +22,7 @@ main(int argc, const char **argv)
     float flt_num = 0.f;
     const char *path = NULL;
     int perms = 0;
+    int long_opt = 0;
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_GROUP("Basic options"),
@@ -30,6 +31,9 @@ main(int argc, const char **argv)
         OPT_STRING('p', "path", &path, "path to read", NULL, 0, 0),
         OPT_INTEGER('i', "int", &int_num, "selected integer", NULL, 0, 0),
         OPT_FLOAT('s', "float", &flt_num, "selected float", NULL, 0, 0),
+        OPT_BOOLEAN('l', "long", &long_opt, "a option that has a really really long help message, "
+                "used to demonstrate that argparse can automatically break up long help messages "
+                "into multiple lines.", NULL, 0, 0),
         OPT_GROUP("Bits options"),
         OPT_BIT(0, "read", &perms, "read perm", NULL, PERM_READ, OPT_NONEG),
         OPT_BIT(0, "write", &perms, "write perm", NULL, PERM_WRITE, 0),

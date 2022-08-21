@@ -54,6 +54,9 @@ Basic options
     -p, --path=<str>      path to read
     -i, --int=<int>       selected integer
     -s, --float=<flt>     selected float
+    -l, --long            a option that has a really really long help message, 
+                          used to demonstrate that argparse can automatically 
+                          break up long help messages into multiple lines.
 
 Bits options
     --read                read perm

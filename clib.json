@@ -1,0 +1,11 @@
+{
+  "name": "argparse",
+  "version": "1.1.0",
+  "repo": "cofyc/argparse",
+  "description": "Command-line arguments parsing library",
+  "license": "MIT",
+  "src": [
+    "argparse.c",
+    "argparse.h"
+  ]
+}

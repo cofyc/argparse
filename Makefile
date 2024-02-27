@@ -40,7 +40,7 @@ $(STLIBNAME): argparse.o
 	$(STLIB_MAKE_CMD) $^
 
 test: 
-	make -C tests/ test
+	make -C tests/ all
 
 clean:
 	rm -rf *.[ao]

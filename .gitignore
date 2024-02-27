@@ -6,3 +6,4 @@ tags
 *.dylib
 *.so
 .vscode
+tests/__pycache__/

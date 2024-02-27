@@ -1,15 +1,16 @@
-all:: test
+all: test 
 
-OBJS += $(patsubst %.c,%,$(wildcard *.c))
-
-${OBJS}: %: %.c ../argparse.c
-	$(CC) -I../ -o $@ ${DEP_LIBS} $^
-
-test: ${OBJS}
-	prove *.sh
+test: subcommands basic
+	python3 -m pytest $(shell pwd)
 .PHONY: test
 
+subcommands: subcommands.c ../argparse.c
+	$(CC) -g -Werror -I../ -o subcommands $^
+
+basic: basic.c ../argparse.c
+	$(CC) -I../ -o basic $^
+
 clean:
-	rm -f ${OBJS}
+	rm -f subcommands basic
 	find . -name '.o' -exec rm \;
 .PHONY: clean

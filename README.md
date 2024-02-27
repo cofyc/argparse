@@ -45,3 +45,8 @@ Options and non-option arguments can clearly be separated using the `--` option.
 
 - [basic](tests/basic.c)
 - [subcommands](tests/subcommands.c)
+
+## Future
+
+- Implement skipped tests and tests/test_argparse.py
+- Generate options' shortnames without them needed to be provided using macros. Allow to override with only long names

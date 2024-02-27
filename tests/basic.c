@@ -1,26 +1,25 @@
+#include "argparse.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "argparse.h"
 
-static const char *const usages[] = {
+static const char* const usages[] = {
     "basic [options] [[--] args]",
     "basic [options]",
     NULL,
 };
 
-#define PERM_READ  (1<<0)
-#define PERM_WRITE (1<<1)
-#define PERM_EXEC  (1<<2)
+#define PERM_READ (1 << 0)
+#define PERM_WRITE (1 << 1)
+#define PERM_EXEC (1 << 2)
 
-int
-main(int argc, const char **argv)
+int main(int argc, const char** argv)
 {
     int force = 0;
     int test = 0;
     int int_num = 0;
     float flt_num = 0.f;
-    const char *path = NULL;
+    const char* path = NULL;
     int perms = 0;
     struct argparse_option options[] = {
         OPT_HELP(),
@@ -38,8 +37,12 @@ main(int argc, const char **argv)
     };
 
     struct argparse argparse;
-    argparse_init(&argparse, options, usages, 0);
-    argparse_describe(&argparse, "\nA brief description of what the program does and how it works.", "\nAdditional description of the program after the description of the arguments.");
+    argparse_init(&argparse, options, NULL, usages);
+    argparse_describe(
+        &argparse,
+        "\nA brief description of what the program does and how it works.",
+        "\nAdditional description of the program after the description of the "
+        "arguments.");
     argc = argparse_parse(&argparse, argc, argv);
     if (force != 0)
         printf("force: %d\n", force);

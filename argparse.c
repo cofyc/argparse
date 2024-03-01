@@ -98,7 +98,7 @@ static int argparse_getvalue(struct argparse* self, const struct argparse_option
         break;
     case ARGPARSE_OPT_FLOAT:
         errno = 0;
-        if (self->optvalue) {
+        if (NULL != self->optvalue) {
             *(float*)opt->value = strtof(self->optvalue, (char**)&s);
             self->optvalue = NULL;
         } else if (self->argc > 1) {
@@ -215,12 +215,11 @@ int argparse_parse(struct argparse* self, int argc, const char** argv)
     self->argc = argc - 1;
     self->argv = argv + 1;
     self->out = argv;
-
     argparse_options_check(self->options);
 
     if (0 == self->argc) {
         argparse_usage(self);
-        goto end;
+        exit(0);
     }
 
     for (; self->argc; self->argc--, self->argv++) {

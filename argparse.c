@@ -14,6 +14,7 @@
 
 #define OPT_UNSET 1
 #define OPT_LONG  (1 << 1)
+#define OPT_POSI  (1 << 2) // Positional argument
 
 static const char *
 prefix_skip(const char *str, const char *prefix)
@@ -38,7 +39,9 @@ argparse_error(struct argparse *self, const struct argparse_option *opt,
                const char *reason, int flags)
 {
     (void)self;
-    if (flags & OPT_LONG) {
+    if (flags & OPT_POSI) {
+        fprintf(stderr, "error: option `%s` %s\n", opt->long_name, reason);
+    } else if (flags & OPT_LONG) {
         fprintf(stderr, "error: option `--%s` %s\n", opt->long_name, reason);
     } else {
         fprintf(stderr, "error: option `-%c` %s\n", opt->short_name, reason);
@@ -146,9 +149,28 @@ argparse_options_check(const struct argparse_option *options)
 }
 
 static int
+argparse_pos_opt(struct argparse *self, const struct argparse_option *options)
+{
+    options += self->posidx;
+    for (; options->type != ARGPARSE_OPT_END; options++, self->posidx++) {
+        if (!(options->flags & OPT_POSITIONAL)) {
+            continue;
+        }
+
+        self->posidx++;
+        return argparse_getvalue(self, options, OPT_POSI);
+    }
+    return -2;
+}
+
+static int
 argparse_short_opt(struct argparse *self, const struct argparse_option *options)
 {
     for (; options->type != ARGPARSE_OPT_END; options++) {
+        if (options->flags & OPT_POSITIONAL) {
+            continue;
+        }
+
         if (options->short_name == *self->optvalue) {
             self->optvalue = self->optvalue[1] ? self->optvalue + 1 : NULL;
             return argparse_getvalue(self, options, 0);
@@ -163,6 +185,10 @@ argparse_long_opt(struct argparse *self, const struct argparse_option *options)
     for (; options->type != ARGPARSE_OPT_END; options++) {
         const char *rest;
         int opt_flags = 0;
+        if (options->flags & OPT_POSITIONAL) {
+            continue;
+        }
+
         if (!options->long_name)
             continue;
 
@@ -229,6 +255,14 @@ argparse_parse(struct argparse *self, int argc, const char **argv)
     for (; self->argc; self->argc--, self->argv++) {
         const char *arg = self->argv[0];
         if (arg[0] != '-' || !arg[1]) {
+            self->optvalue = arg;
+            switch (argparse_pos_opt(self, self->options)) {
+            case 0:
+                continue;
+            case -1:
+                break;
+            }
+
             if (self->flags & ARGPARSE_STOP_AT_NON_OPTION) {
                 goto end;
             }
@@ -319,7 +353,10 @@ argparse_usage(struct argparse *self)
             len += 2;           // separator ", "
         }
         if ((options)->long_name) {
-            len += strlen((options)->long_name) + 2;
+            len += strlen((options)->long_name);
+            if (!(options->flags & OPT_POSITIONAL)) {
+                len += 2;
+            }
         }
         if (options->type == ARGPARSE_OPT_INTEGER) {
             len += strlen("=<int>");
@@ -354,7 +391,11 @@ argparse_usage(struct argparse *self)
             pos += fprintf(stdout, ", ");
         }
         if (options->long_name) {
-            pos += fprintf(stdout, "--%s", options->long_name);
+            if (options->flags & OPT_POSITIONAL) {
+                pos += fprintf(stdout, "%s", options->long_name);
+            } else {
+                pos += fprintf(stdout, "--%s", options->long_name);
+            }
         }
         if (options->type == ARGPARSE_OPT_INTEGER) {
             pos += fprintf(stdout, "=<int>");
@@ -392,4 +433,3 @@ argparse_help_cb(struct argparse *self, const struct argparse_option *option)
     argparse_help_cb_no_exit(self, option);
     exit(EXIT_SUCCESS);
 }
-

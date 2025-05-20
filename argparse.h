@@ -41,6 +41,7 @@ enum argparse_option_type {
 
 enum argparse_option_flags {
     OPT_NONEG = 1,              /* disable negation */
+    OPT_POSITIONAL = 2,         /* option is positional */
 };
 
 /**
@@ -98,6 +99,7 @@ struct argparse {
     const char **argv;
     const char **out;
     int cpidx;
+    int posidx;                 // index of next option to check if positional
     const char *optvalue;       // current option value
 };
 

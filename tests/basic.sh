@@ -3,10 +3,12 @@
 . $(dirname ${BASH_SOURCE[0]})/tap-functions
 plan_no_plan
 
-is "$(./basic -f --path=/path/to/file a 2>&1)" 'force: 1
+is "$(./basic -f 42 --path=/path/to/file a b 2>&1)" 'force: 1
 path: /path/to/file
+posi: 42
+poss: a
 argc: 1
-argv[0]: a'
+argv[0]: b'
 
 is "$(./basic -f -f --force --no-force 2>&1)" 'force: 2'
 
@@ -17,6 +19,8 @@ is "$(./basic -i 2 2>&1)" 'int_num: 2'
 is "$(./basic -i2 2>&1)" 'int_num: 2'
 
 is "$(./basic -ia 2>&1)" 'error: option `-i` expects an integer value'
+
+is "$(./basic a 2>&1)" 'error: option `posi` expects an integer value'
 
 is "$(./basic -i 0xFFFFFFFFFFFFFFFFF 2>&1)" \
    'error: option `-i` numerical result out of range'
@@ -41,7 +45,7 @@ test: 1'
 
 is "$(./basic --read --write 2>&1)" 'perms: 3'
 
-help_usage='Usage: basic [options] [[--] args]
+help_usage='Usage: basic [options] posi poss [[--] args]
    or: basic [options]
 
 A brief description of what the program does and how it works.
@@ -59,6 +63,10 @@ Bits options
     --read                read perm
     --write               write perm
     --exec                exec perm
+
+Positional options
+    posi=<int>            positional integer
+    poss=<str>            positional string
 
 Additional description of the program after the description of the arguments.'
 

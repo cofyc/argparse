@@ -12,6 +12,8 @@
 #include <errno.h>
 #include "argparse.h"
 
+#define LINE_WRAP 80
+
 #define OPT_UNSET 1
 #define OPT_LONG  (1 << 1)
 
@@ -286,6 +288,55 @@ end:
     return self->cpidx + self->argc;
 }
 
+void argparse_print_help(const char *help, int indent, int offset, int line_wrap)
+{
+    if (offset > indent) {
+        fputs("\n", stdout);
+        offset = 0;
+    }
+
+    if (line_wrap - indent <= 1) {
+        line_wrap = indent + 2;
+    }
+
+    size_t pos = 0;
+    size_t len = strlen(help);
+    while (pos < len) {
+        fprintf(stdout, "%*s", indent - offset, "");
+        offset = 0;
+        size_t towrite = line_wrap - indent;
+        while (help[pos] == ' ') {
+            pos++;
+        }
+        if (pos + towrite > len) {
+            towrite = len - pos;
+            fwrite(help + pos, 1, towrite, stdout);
+        } else {
+            int space_break = towrite;
+            while (space_break > 0 && help[pos + space_break - 1] != ' ') {
+                space_break--;
+            }
+
+            int print_hyphen = 0;
+            if (space_break == 0) {
+                print_hyphen = 1;
+                towrite--;
+            } else {
+                towrite = space_break;
+            }
+
+            fwrite(help + pos, 1, towrite, stdout);
+
+            if (print_hyphen) {
+                fputs("-", stdout);
+            }
+        }
+
+        fputs("\n", stdout);
+        pos += towrite;
+    }
+}
+
 void
 argparse_usage(struct argparse *self)
 {
@@ -330,7 +381,8 @@ argparse_usage(struct argparse *self)
             len += strlen("=<str>");
         }
         len = (len + 3) - ((len + 3) & 3);
-        if (usage_opts_width < len) {
+        // If len >= LINE_WRAP / 2, we prints the option on a separate line.
+        if (len < LINE_WRAP / 2 && usage_opts_width < len) {
             usage_opts_width = len;
         }
     }
@@ -339,7 +391,6 @@ argparse_usage(struct argparse *self)
     options = self->options;
     for (; options->type != ARGPARSE_OPT_END; options++) {
         size_t pos = 0;
-        size_t pad = 0;
         if (options->type == ARGPARSE_OPT_GROUP) {
             fputc('\n', stdout);
             fprintf(stdout, "%s", options->help);
@@ -363,13 +414,7 @@ argparse_usage(struct argparse *self)
         } else if (options->type == ARGPARSE_OPT_STRING) {
             pos += fprintf(stdout, "=<str>");
         }
-        if (pos <= usage_opts_width) {
-            pad = usage_opts_width - pos;
-        } else {
-            fputc('\n', stdout);
-            pad = usage_opts_width;
-        }
-        fprintf(stdout, "%*s%s\n", (int)pad + 2, "", options->help);
+        argparse_print_help(options->help, usage_opts_width + 2, pos, LINE_WRAP);
     }
 
     // print epilog

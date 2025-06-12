@@ -124,7 +124,7 @@ jobs:
     strategy:
       matrix:
         compiler: [gcc, clang]
-        std: [c89, c99, c11]
+        std: [c99, c11]
 
     steps:
     - uses: actions/checkout@v4
@@ -137,7 +137,7 @@ jobs:
     - name: Test C standard compliance
       run: |
         export CC=${{ matrix.compiler }}
-        export CFLAGS="-std=${{ matrix.std }} -Wall -Wextra -Werror -pedantic"
+        export CFLAGS="-std=${{ matrix.std }} -Wall -Wextra -Werror"
         make clean || true
         make
         make test

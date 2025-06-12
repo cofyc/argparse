@@ -27,8 +27,9 @@ jobs:
         cmake -B build
         cmake --build build
 
-    - name: Verify basic functionality
+    - name: Build tests and verify basic functionality
       run: |
         cd tests
+        make test_null_help test_callbacks
         ./test_null_help --help
         ./test_callbacks --help

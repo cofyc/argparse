@@ -1,0 +1,34 @@
+name: Quick Test
+
+on:
+  push:
+    branches-ignore: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  quick-test:
+    name: Quick Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Quick build with Make
+      run: |
+        make
+
+    - name: Quick test with Make
+      run: |
+        make test
+
+    - name: Quick build with CMake
+      run: |
+        cmake -B build
+        cmake --build build
+
+    - name: Verify basic functionality
+      run: |
+        cd tests
+        ./test_null_help --help
+        ./test_callbacks --help

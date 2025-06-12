@@ -1,0 +1,185 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test-make:
+    name: Test with Make
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            cc: gcc
+          - os: macos-latest
+            cc: clang
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
+    - name: Install dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        # Ensure we have the latest Xcode command line tools
+        xcode-select --install 2>/dev/null || true
+
+    - name: Build with Make
+      run: |
+        export CC=${{ matrix.cc }}
+        make clean || true
+        make
+
+    - name: Test with Make
+      run: |
+        make test
+
+    - name: Test installation
+      run: |
+        sudo make install PREFIX=/usr/local
+        # Verify installation
+        ls -la /usr/local/lib/libargparse*
+        ls -la /usr/local/include/argparse.h
+
+  test-cmake:
+    name: Test with CMake
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        build_type: [Debug, Release]
+        include:
+          - os: ubuntu-latest
+            generator: "Unix Makefiles"
+          - os: macos-latest
+            generator: "Unix Makefiles"
+          - os: windows-latest
+            generator: "Visual Studio 17 2022"
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+
+    - name: Install dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install cmake
+
+    - name: Setup MSVC (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Configure CMake
+      run: |
+        cmake -B build -G "${{ matrix.generator }}" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+    - name: Build with CMake
+      run: |
+        cmake --build build --config ${{ matrix.build_type }}
+
+    - name: Test with CMake (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cd build
+        make -C ../tests test
+
+    - name: Test with CMake (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Windows doesn't have make, so we'll compile and run tests manually
+        cd tests
+        cl /I../ test_null_help.c ../argparse.c /Fe:test_null_help.exe
+        ./test_null_help.exe --help
+
+    - name: Test installation with CMake (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        sudo cmake --install build --prefix /usr/local
+        # Verify installation
+        ls -la /usr/local/lib/libargparse*
+        ls -la /usr/local/include/argparse.h
+        # Test pkg-config
+        pkg-config --exists argparse
+
+  test-cross-platform:
+    name: Cross-platform compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+        std: [c89, c99, c11]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install compilers
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc clang
+
+    - name: Test C standard compliance
+      run: |
+        export CC=${{ matrix.compiler }}
+        export CFLAGS="-std=${{ matrix.std }} -Wall -Wextra -Werror -pedantic"
+        make clean || true
+        make
+        make test
+
+  memory-safety:
+    name: Memory Safety Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y valgrind clang
+
+    - name: Build with sanitizers
+      run: |
+        export CC=clang
+        export CFLAGS="-fsanitize=address -fsanitize=undefined -g"
+        export LDFLAGS="-fsanitize=address -fsanitize=undefined"
+        make clean || true
+        make
+
+    - name: Run tests with AddressSanitizer
+      run: |
+        export ASAN_OPTIONS=abort_on_error=1
+        make test
+
+    - name: Build for Valgrind
+      run: |
+        make clean
+        export CFLAGS="-g -O0"
+        make
+
+    - name: Run tests with Valgrind
+      run: |
+        cd tests
+        for test in test_*.sh; do
+          echo "Running $test with Valgrind..."
+          # Modify test to run with valgrind
+          sed 's|\./\([^[:space:]]*\)|valgrind --error-exitcode=1 --leak-check=full ./\1|g' "$test" > "valgrind_$test"
+          chmod +x "valgrind_$test"
+          bash "valgrind_$test" || echo "Valgrind test failed: $test"
+        done

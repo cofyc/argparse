@@ -25,3 +25,28 @@ if(ARGPARSE_STATIC)
 	set_target_properties(argparse_static PROPERTIES OUTPUT_NAME argparse_static)
 endif()
 
+# Installation
+include(GNUInstallDirs)
+
+# Install header
+install(FILES argparse.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Install libraries
+if(ARGPARSE_SHARED)
+	install(TARGETS argparse_shared
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+
+if(ARGPARSE_STATIC)
+	install(TARGETS argparse_static
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+
+# Generate and install pkg-config file
+configure_file(argparse.pc.in argparse.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/argparse.pc
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+

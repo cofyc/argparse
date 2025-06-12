@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: argparse
+Description: Command-line argument parsing library for C/C++
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -largparse
+Cflags: -I${includedir}

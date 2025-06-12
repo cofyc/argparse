@@ -1,4 +1,5 @@
 # Defaults
+PREFIX ?= /usr/local
 CFLAGS ?= -O3 -g -ggdb
 LDFLAGS ?=
 CROSS_COMPILE =
@@ -41,6 +42,18 @@ $(STLIBNAME): argparse.o
 
 test: 
 	make -C tests/ test
+
+install: $(DYLIBNAME) $(STLIBNAME)
+	install -d $(PREFIX)/lib
+	install -d $(PREFIX)/include
+	install -m 644 argparse.h $(PREFIX)/include/
+	install -m 755 $(DYLIBNAME) $(PREFIX)/lib/
+	install -m 644 $(STLIBNAME) $(PREFIX)/lib/
+
+uninstall:
+	rm -f $(PREFIX)/include/argparse.h
+	rm -f $(PREFIX)/lib/$(DYLIBNAME)
+	rm -f $(PREFIX)/lib/$(STLIBNAME)
 
 clean:
 	rm -rf *.[ao]

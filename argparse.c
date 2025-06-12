@@ -369,7 +369,7 @@ argparse_usage(struct argparse *self)
             fputc('\n', stdout);
             pad = usage_opts_width;
         }
-        fprintf(stdout, "%*s%s\n", (int)pad + 2, "", options->help);
+        fprintf(stdout, "%*s%s\n", (int)pad + 2, "", options->help ? options->help : "");
     }
 
     // print epilog

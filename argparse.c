@@ -47,10 +47,11 @@ argparse_error(struct argparse *self, const struct argparse_option *opt,
 }
 
 static int
-argparse_getvalue(struct argparse *self, const struct argparse_option *opt,
+argparse_getvalue(struct argparse *self, struct argparse_option *opt,
                   int flags)
 {
     const char *s = NULL;
+    opt->parsed = 1;
     if (!opt->value)
         goto skipped;
     switch (opt->type) {
@@ -146,7 +147,7 @@ argparse_options_check(const struct argparse_option *options)
 }
 
 static int
-argparse_short_opt(struct argparse *self, const struct argparse_option *options)
+argparse_short_opt(struct argparse *self, struct argparse_option *options)
 {
     for (; options->type != ARGPARSE_OPT_END; options++) {
         if (options->short_name == *self->optvalue) {
@@ -158,7 +159,7 @@ argparse_short_opt(struct argparse *self, const struct argparse_option *options)
 }
 
 static int
-argparse_long_opt(struct argparse *self, const struct argparse_option *options)
+argparse_long_opt(struct argparse *self, struct argparse_option *options)
 {
     for (; options->type != ARGPARSE_OPT_END; options++) {
         const char *rest;
@@ -217,9 +218,22 @@ argparse_describe(struct argparse *self, const char *description,
     self->epilog      = epilog;
 }
 
+void argparse_check_for_required(struct argparse *self, struct argparse_option *options) {
+    for(; options->type != ARGPARSE_OPT_END; options++) {
+        // printf("checking %s %d %d\n", options->long_name, options->parsed, options->flags);
+        if((options->flags & OPT_REQUIRED) == OPT_REQUIRED && !options->parsed) {
+            // error => required option not parsed
+            fprintf(stderr, "error: option `%s` required\n", options->long_name);
+            argparse_usage(self);
+            exit(1);
+        }
+    }
+}
+
 int
 argparse_parse(struct argparse *self, int argc, const char **argv)
 {
+
     self->argc = argc - 1;
     self->argv = argv + 1;
     self->out  = argv;
@@ -279,6 +293,9 @@ unknown:
     }
 
 end:
+    // check required options and exit if not all flags are satisfied
+    argparse_check_for_required(self, self->options);
+
     memmove(self->out + self->cpidx, self->argv,
             self->argc * sizeof(*self->out));
     self->out[self->cpidx + self->argc] = NULL;
@@ -304,7 +321,7 @@ argparse_usage(struct argparse *self)
 
     fputc('\n', stdout);
 
-    const struct argparse_option *options;
+    struct argparse_option *options;
 
     // figure out best width
     size_t usage_opts_width = 0;

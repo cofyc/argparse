@@ -4,7 +4,7 @@
 #include "argparse.h"
 
 static const char *const usages[] = {
-    "basic [options] [[--] args]",
+    "basic [options] posi poss [[--] args]",
     "basic [options]",
     NULL,
 };
@@ -21,6 +21,8 @@ main(int argc, const char **argv)
     int int_num = 0;
     float flt_num = 0.f;
     const char *path = NULL;
+    int posi = 0;
+    const char *poss = NULL;
     int perms = 0;
     struct argparse_option options[] = {
         OPT_HELP(),
@@ -34,6 +36,9 @@ main(int argc, const char **argv)
         OPT_BIT(0, "read", &perms, "read perm", NULL, PERM_READ, OPT_NONEG),
         OPT_BIT(0, "write", &perms, "write perm", NULL, PERM_WRITE, 0),
         OPT_BIT(0, "exec", &perms, "exec perm", NULL, PERM_EXEC, 0),
+        OPT_GROUP("Positional options"),
+        OPT_INTEGER(0, "posi", &posi, "positional integer", NULL, 0, OPT_POSITIONAL),
+        OPT_STRING(0, "poss", &poss, "positional string", NULL, 0, OPT_POSITIONAL),
         OPT_END(),
     };
 
@@ -51,6 +56,10 @@ main(int argc, const char **argv)
         printf("int_num: %d\n", int_num);
     if (flt_num != 0)
         printf("flt_num: %g\n", flt_num);
+    if (posi != 0)
+        printf("posi: %d\n", posi);
+    if (poss != NULL)
+        printf("poss: %s\n", poss);
     if (argc != 0) {
         printf("argc: %d\n", argc);
         int i;
